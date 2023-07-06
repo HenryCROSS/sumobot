@@ -1,80 +1,77 @@
 #include "wheel.h"
 
-Motor::Motor(uint8_t pin) : pin(pin)
-{
+Motor::Motor(uint8_t pin)
+  : pin(pin) {
 }
 
-Wheel::Wheel(uint8_t pin) : pin(pin)
-{
+Wheel::Wheel(uint8_t pin)
+  : pin(pin) {
 }
 
-void wheel_forward(Wheel forward, Wheel backward)
-{
-    digitalWrite(forward.pin, HIGH);
-    digitalWrite(backward.pin, LOW);
+Car::Car(Motor left, Motor right, Wheel left_forward, Wheel left_backward,
+         Wheel right_forward, Wheel right_backward)
+  : left_wheel_motor(left.pin),
+    right_wheel_motor(right.pin),
+    left_wheel_forward(left_forward.pin),
+    left_wheel_backward(left_backward.pin) {
 }
 
-void wheel_backward(Wheel forward, Wheel backward)
-{
-    digitalWrite(forward.pin, LOW);
-    digitalWrite(backward.pin, HIGH);
+void wheel_forward(Wheel forward, Wheel backward) {
+  digitalWrite(forward.pin, HIGH);
+  digitalWrite(backward.pin, LOW);
 }
 
-void wheel_stop(Wheel forward, Wheel backward)
-{
-    digitalWrite(forward.pin, LOW);
-    digitalWrite(backward.pin, LOW);
+void wheel_backward(Wheel forward, Wheel backward) {
+  digitalWrite(forward.pin, LOW);
+  digitalWrite(backward.pin, HIGH);
 }
 
-void wheel_move_speed(Motor motor, int speed)
-{
-    analogWrite(motor.pin, speed);
+void wheel_stop(Wheel forward, Wheel backward) {
+  digitalWrite(forward.pin, LOW);
+  digitalWrite(backward.pin, LOW);
 }
 
-void car_go_forward(int speed)
-{
-    wheel_move_speed(SPEEDA, speed);
-    wheel_move_speed(SPEEDB, speed);
-    wheel_forward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
-    wheel_forward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
+void wheel_move_speed(Motor motor, int speed) {
+  analogWrite(motor.pin, speed);
 }
 
-void car_go_backward(int speed)
-{
-    wheel_move_speed(SPEEDA, speed);
-    wheel_move_speed(SPEEDB, speed);
-    wheel_backward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
-    wheel_backward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
+void car_go_forward(Car car, int speed) {
+  wheel_move_speed(car.left_wheel_motor, speed);
+  wheel_move_speed(car.right_wheel_motor, speed);
+  wheel_forward(car.left_wheel_forward, car.left_wheel_forward);
+  wheel_forward(car.right_wheel_forward, car.right_wheel_backward);
 }
 
-void car_turn_right_by_speed(int left_wheel_forward_speed, int right_wheel_backward_speed)
-{
-    wheel_move_speed(SPEEDA, left_wheel_forward_speed);
-    wheel_move_speed(SPEEDB, right_wheel_backward_speed);
-    wheel_forward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
-    wheel_backward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
+void car_go_backward(Car car, int speed) {
+  wheel_move_speed(car.left_wheel_motor, speed);
+  wheel_move_speed(car.right_wheel_motor, speed);
+  wheel_backward(car.left_wheel_forward, car.left_wheel_backward);
+  wheel_backward(car.right_wheel_forward, car.right_wheel_backward);
 }
 
-void car_turn_left_by_speed(int left_wheel_backward_speed, int right_wheel_forward_speed)
-{
-    wheel_move_speed(SPEEDA, left_wheel_backward_speed);
-    wheel_move_speed(SPEEDB, right_wheel_forward_speed);
-    wheel_forward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
-    wheel_backward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
+void car_turn_right_by_speed(Car car, int left_wheel_forward_speed, int right_wheel_backward_speed) {
+  wheel_move_speed(car.left_wheel_motor, left_wheel_forward_speed);
+  wheel_move_speed(car.right_wheel_motor, right_wheel_backward_speed);
+  wheel_forward(car.left_wheel_forward, car.left_wheel_backward);
+  wheel_backward(car.right_wheel_forward, car.right_wheel_backward);
 }
 
-void car_turn_left(int speed)
-{
-    car_turn_left_by_speed(speed, 0);
+void car_turn_left_by_speed(Car car, int left_wheel_backward_speed, int right_wheel_forward_speed) {
+  wheel_move_speed(car.left_wheel_motor, left_wheel_backward_speed);
+  wheel_move_speed(car.right_wheel_motor, right_wheel_forward_speed);
+  wheel_forward(car.right_wheel_forward, car.right_wheel_backward);
+  wheel_backward(car.left_wheel_forward, car.left_wheel_backward);
 }
 
-void car_turn_right(int speed)
-{
-    car_turn_right_by_speed(0, speed);
+void car_turn_left(Car car, int speed) {
+  car_turn_left_by_speed(car, speed, 0);
 }
 
-void car_stop(void)
-{
-    wheel_stop(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
-    wheel_stop(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
+void car_turn_right(Car car, int speed) {
+  car_turn_right_by_speed(car, 0, speed);
+}
+
+void car_stop(Car car, void) {
+  wheel_stop(car.left_wheel_forward, car.left_wheel_backward);
+  wheel_stop(car.right_wheel_forward, car.right_wheel_backward);
 }

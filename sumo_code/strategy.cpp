@@ -1,9 +1,9 @@
 #include "strategy.h"
 #include "ultrasonic.h"
 
-bool is_obj_exist(double range)
+bool is_obj_exist(Ultrasonic ultra, double range)
 {
-    double distance = detect_obj_distance(TRIGGER_PIN, ECHO_PIN);
+    double distance = detect_obj_distance(ultra.writer, ultra.reader);
 
     if (distance < range)
     {
