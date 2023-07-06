@@ -3,5 +3,6 @@
 
 #include <Arduino.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #endif // COMMON_H_

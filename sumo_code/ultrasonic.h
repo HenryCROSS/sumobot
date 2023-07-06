@@ -33,6 +33,6 @@ enum class TargetZone
     ObjClose,
 };
 
-double detect_obj_distance(USWriter writer, USReader reader);
+double detect_obj_distance(USWriter writer, USReader reader, unsigned long distance);
 
 #endif // ULTRASONIC_H_

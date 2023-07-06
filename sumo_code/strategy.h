@@ -5,7 +5,7 @@
 #include "ultrasonic.h"
 
 
-bool is_obj_exist(Ultrasonic ultra, double range);
+bool is_obj_exist(Ultrasonic ultra, unsigned long max_distance, double range);
 
 
 #endif // STRATEGY_H_
