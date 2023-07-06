@@ -1,26 +1,34 @@
 #include "wheel.h"
 
-void wheel_forward(uint8_t forward_pin, uint8_t backward_pin)
+Motor::Motor(uint8_t pin) : pin(pin)
 {
-    digitalWrite(forward_pin, HIGH);
-    digitalWrite(backward_pin, LOW);
 }
 
-void wheel_backward(uint8_t forward_pin, uint8_t backward_pin)
+Wheel::Wheel(uint8_t pin) : pin(pin)
 {
-    digitalWrite(forward_pin, LOW);
-    digitalWrite(backward_pin, HIGH);
 }
 
-void wheel_stop(uint8_t forward_pin, uint8_t backward_pin)
+void wheel_forward(Wheel forward, Wheel backward)
 {
-    digitalWrite(forward_pin, LOW);
-    digitalWrite(backward_pin, LOW);
+    digitalWrite(forward.pin, HIGH);
+    digitalWrite(backward.pin, LOW);
 }
 
-void wheel_move_speed(uint8_t pin, int speed)
+void wheel_backward(Wheel forward, Wheel backward)
 {
-    analogWrite(pin, speed);
+    digitalWrite(forward.pin, LOW);
+    digitalWrite(backward.pin, HIGH);
+}
+
+void wheel_stop(Wheel forward, Wheel backward)
+{
+    digitalWrite(forward.pin, LOW);
+    digitalWrite(backward.pin, LOW);
+}
+
+void wheel_move_speed(Motor motor, int speed)
+{
+    analogWrite(motor.pin, speed);
 }
 
 void car_go_forward(int speed)

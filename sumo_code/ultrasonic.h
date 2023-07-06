@@ -1,9 +1,8 @@
 #ifndef ULTRASONIC_H_
 #define ULTRASONIC_H_
 
-#include <cstdint>
-
 #define MAX_DETECTED_DISTANCE 200
+#include "common.h"
 
 struct USReader
 {
@@ -14,7 +13,6 @@ struct USReader
 struct USWriter
 {
     const uint8_t pin;
-
     USWriter(uint8_t pin);
 };
 
