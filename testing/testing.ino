@@ -22,6 +22,17 @@ enum class Edge_direction {
   NONE,
 };
 
+enum class Adjust_attck_direction {
+  TURN_LEFT,
+  TURN_RIGHT,
+  NOTHING,
+};
+
+struct Obj_direction {
+  double left_sensor;
+  double right_sensor;
+};
+
 void setup() {
   // put your setup code here, to run once:
   pinMode(TRIGGER_PIN_L, OUTPUT);
@@ -38,7 +49,7 @@ void setup() {
   pinMode(QTR_SENSOR_FR, INPUT);
   pinMode(QTR_SENSOR_B, INPUT);
 
-  randomSeed(analogRead(0))
+  randomSeed(analogRead(0));
   delay(5000);
   Serial.begin(9600);
 }
@@ -113,6 +124,10 @@ void car_turn_right(int speed) {
   car_turn_right_by_speed(0, speed);
 }
 
+void car_turn_attack_direction(Obj_direction info, int speed) {
+  //TODO: adjust direction based on the info
+}
+
 void car_stop(void) {
   wheel_stop(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
   wheel_stop(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
@@ -161,19 +176,28 @@ void do_actions_duration(unsigned long ms, Fn fn, Args... args) {
   delay(ms);
 }
 
-// range ~= 60
-bool is_obj_exist(double range) {
-  double distance = detect_obj_distance(TRIGGER_PIN_L, ECHO_PIN_L);
-
-  if (distance < range) {
-    return true;
-  } else {
-    return false;
-  }
+bool is_obj_in_distance(Obj_direction info, double range){
+  return info.left_sensor <= range && info.right_sensor <= range;
 }
 
-double obj_exist_distance(double range, uint8_t trigger_pin, echo_pin) {
-  return detect_obj_distance(trigger_pin, echo_pin);
+// range ~= 60
+Obj_direction obj_detected_info(double range) {
+  double distance_l = detect_obj_distance(TRIGGER_PIN_L, ECHO_PIN_L);
+  double distance_r = detect_obj_distance(TRIGGER_PIN_R, ECHO_PIN_R);
+
+  return (Obj_direction){
+    .left_sensor = distance_l < range? distance_l: -1,
+    .right_sensor = distance_r < range? distance_r: -1,
+  };
+}
+
+bool is_adjusting_needed (Obj_direction info, double max_range, double tolerance) {
+  if (abs(info.left_sensor - info.right_sensor) < tolerance){
+    return false;
+  } else if(info.left_sensor <= max_range || info.right_sensor <= max_range){
+    return true;
+  }
+  return false;
 }
 
 void search_strategy(Edge_direction edge) {
@@ -185,7 +209,7 @@ void search_strategy(Edge_direction edge) {
       break;
 
     case Edge_direction::BACK:
-      car_go_random(80)
+      car_go_random(80);
       break;
 
     case Edge_direction::FRONT_RIGHT:
@@ -199,7 +223,7 @@ void search_strategy(Edge_direction edge) {
 void loop() {
   // put your main code here, to run repeatedly:
   static Edge_direction prev_turning_edge;
-  auto edge = determine_edge(QTR_SENSOR_FL, QTR_SENSOR_FR);
+  auto edge = determine_edge(QTR_SENSOR_FL, QTR_SENSOR_FR, QTR_SENSOR_B);
 
   // Serial.println("======");
   switch (edge) {
@@ -230,17 +254,21 @@ void loop() {
     case Edge_direction::NONE:
       do_actions_duration(
         10, [&](Edge_direction e) {
-          if (is_obj_exist(2.0)) {
+          Obj_direction info = obj_detected_info(80);
+
+          if (is_adjusting_needed(info, 80, 10)){
+            car_turn_attack_direction(info, 40);
+          } else if (is_obj_in_distance(info, 7.0)) {
             car_go_forward(255);
-            Serial.println("go 255! ");
-          } else if (is_obj_exist(5.0)) {
+            // Serial.println("go 255! ");
+          } else if (is_obj_in_distance(info, 15.0)) {
             car_go_forward(150);
-            Serial.println("go 150! ");
-          } else if (is_obj_exist(60.0)) {
+            // Serial.println("go 150! ");
+          } else if (is_obj_in_distance(info, 60.0)) {
             car_go_forward(80);
-            Serial.println("go 90! ");
+            // Serial.println("go 80! ");
           } else {
-            Serial.println("dectect! ");
+            // Serial.println("dectect! ");
             // search action
             search_strategy(e);
           }
