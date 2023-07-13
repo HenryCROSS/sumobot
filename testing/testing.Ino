@@ -1,15 +1,16 @@
 #define SPEEDA 10               // Motor A enable pin
-#define SPEEDB 9               // Motor B enable pin
+#define SPEEDB 9                // Motor B enable pin
 #define RIGHT_WHEEL_FORWARD 3   // Motor B In1 pin
 #define RIGHT_WHEEL_BACKWARD 2  // Motor B In2 pin
 #define LEFT_WHEEL_FORWARD 5    // Motor A In1 pin
 #define LEFT_WHEEL_BACKWARD 4   // Motor A In2 pin
-#define TRIGGER_PIN 6           // Ultrasonic sensor trigger pin
-#define ECHO_PIN 7              // Ultrasonic sensor echo pin
-#define QTR_SENSOR_FL A5         // qtr sensor
-#define QTR_SENSOR_FR A4         // qtr sensor
-// #define QTR_SENSOR_BL 15        // waiting for qtr sensor
-// #define QTR_SENSOR_BR 16        // waiting for qtr sensor
+#define TRIGGER_PIN_L 6         // Ultrasonic sensor trigger pin
+#define ECHO_PIN_L 7            // Ultrasonic sensor echo pin
+#define TRIGGER_PIN_R 8         // Ultrasonic sensor trigger pin
+#define ECHO_PIN_R 9            // Ultrasonic sensor echo pin
+#define QTR_SENSOR_FL A5        // qtr sensor
+#define QTR_SENSOR_FR A4        // qtr sensor
+#define QTR_SENSOR_B A6         // qtr sensor
 
 #define MAX_DISTANCE 200
 
@@ -17,13 +18,16 @@ enum class Edge_direction {
   FRONT,
   FRONT_RIGHT,
   FRONT_LEFT,
+  BACK,
   NONE,
 };
 
 void setup() {
   // put your setup code here, to run once:
-  pinMode(TRIGGER_PIN, OUTPUT);
-  pinMode(ECHO_PIN, INPUT);
+  pinMode(TRIGGER_PIN_L, OUTPUT);
+  pinMode(ECHO_PIN_L, INPUT);
+  pinMode(TRIGGER_PIN_R, OUTPUT);
+  pinMode(ECHO_PIN_R, INPUT);
   pinMode(LEFT_WHEEL_FORWARD, OUTPUT);
   pinMode(LEFT_WHEEL_BACKWARD, OUTPUT);
   pinMode(RIGHT_WHEEL_FORWARD, OUTPUT);
@@ -32,9 +36,9 @@ void setup() {
   pinMode(SPEEDB, OUTPUT);
   pinMode(QTR_SENSOR_FL, INPUT);
   pinMode(QTR_SENSOR_FR, INPUT);
-  // pinMode(QTR_SENSOR_BL, INPUT);
-  // pinMode(QTR_SENSOR_BR, INPUT);
+  pinMode(QTR_SENSOR_B, INPUT);
 
+  randomSeed(analogRead(0))
   delay(5000);
   Serial.begin(9600);
 }
@@ -72,6 +76,21 @@ void car_go_backward(int speed) {
   wheel_backward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
 
+void car_go_random(int speed) {
+  long rand_num = random(3);
+  switch (rand_num) {
+    case 0:
+      car_go_forward(speed);
+      break;
+    case 1:
+      car_turn_left(speed);
+      break;
+    case 2:
+      car_turn_right(speed);
+      break;
+  }
+}
+
 void car_turn_right_by_speed(int left_wheel_forward_speed, int right_wheel_backward_speed) {
   wheel_move_speed(SPEEDA, left_wheel_forward_speed);
   wheel_move_speed(SPEEDB, right_wheel_backward_speed);
@@ -99,8 +118,6 @@ void car_stop(void) {
   wheel_stop(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
 
-
-
 double detect_obj_distance(uint8_t trigger_pin, uint8_t echo_pin) {
   digitalWrite(trigger_pin, LOW);
   delayMicroseconds(2);
@@ -110,10 +127,10 @@ double detect_obj_distance(uint8_t trigger_pin, uint8_t echo_pin) {
   return pulseIn(echo_pin, HIGH, MAX_DISTANCE * 58) / 58.0;
 }
 
-Edge_direction determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sensor_front_right) {
+Edge_direction determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sensor_front_right, uint8_t qtr_sensor_back) {
   int frontL = analogRead(qtr_sensor_front_left);
   int frontR = analogRead(qtr_sensor_front_right);
-
+  int back = analogRead(qtr_sensor_back);
   // Serial.print("FrontL: ");
   // Serial.println(frontL);
 
@@ -123,6 +140,8 @@ Edge_direction determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sensor_
     return Edge_direction::FRONT_LEFT;
   } else if (frontR <= 400) {
     return Edge_direction::FRONT_RIGHT;
+  } else if (back <= 400) {
+    return Edge_direction::BACK;
   } else {
     return Edge_direction::NONE;
   }
@@ -144,14 +163,17 @@ void do_actions_duration(unsigned long ms, Fn fn, Args... args) {
 
 // range ~= 60
 bool is_obj_exist(double range) {
-  double distance = detect_obj_distance(TRIGGER_PIN, ECHO_PIN);
-
+  double distance = detect_obj_distance(TRIGGER_PIN_L, ECHO_PIN_L);
 
   if (distance < range) {
     return true;
   } else {
     return false;
   }
+}
+
+double obj_exist_distance(double range, uint8_t trigger_pin, echo_pin) {
+  return detect_obj_distance(trigger_pin, echo_pin);
 }
 
 void search_strategy(Edge_direction edge) {
@@ -162,14 +184,14 @@ void search_strategy(Edge_direction edge) {
       car_turn_right_by_speed(80, 80);
       break;
 
+    case Edge_direction::BACK:
+      car_go_random(80)
+      break;
+
     case Edge_direction::FRONT_RIGHT:
     default:
       // Serial.print("turn left ");
       car_turn_left_by_speed(80, 80);
-      break;
-
-    case Edge_direction::NONE:
-      // Serial.println("???");
       break;
   }
 }
@@ -179,7 +201,7 @@ void loop() {
   static Edge_direction prev_turning_edge;
   auto edge = determine_edge(QTR_SENSOR_FL, QTR_SENSOR_FR);
 
-  Serial.println("======");
+  // Serial.println("======");
   switch (edge) {
     case Edge_direction::FRONT:
       // Serial.println("Go backward");
@@ -190,29 +212,32 @@ void loop() {
 
     case Edge_direction::FRONT_LEFT:
       // Serial.println("Front left");
-      do_actions_duration(1, car_turn_right_by_speed, 100, 100);
+      do_actions_duration(10, car_turn_right_by_speed, 100, 100);
       prev_turning_edge = edge;
       break;
 
     case Edge_direction::FRONT_RIGHT:
       // Serial.println("Front right");
-      do_actions_duration(1, car_turn_left_by_speed, 100, 100);
+      do_actions_duration(10, car_turn_left_by_speed, 100, 100);
+      prev_turning_edge = edge;
+      break;
+
+    case Edge_direction::BACK:
+      do_actions_duration(10, car_go_forward, 100);
       prev_turning_edge = edge;
       break;
 
     case Edge_direction::NONE:
       do_actions_duration(
-        1, [&](Edge_direction e) mutable {
+        10, [&](Edge_direction e) {
           if (is_obj_exist(2.0)) {
             car_go_forward(255);
             Serial.println("go 255! ");
-          }
-          else if (is_obj_exist(5.0)) {
+          } else if (is_obj_exist(5.0)) {
             car_go_forward(150);
             Serial.println("go 150! ");
-          }
-          else if (is_obj_exist(60.0)){
-            car_go_forward(80);            
+          } else if (is_obj_exist(60.0)) {
+            car_go_forward(80);
             Serial.println("go 90! ");
           } else {
             Serial.println("dectect! ");
@@ -221,13 +246,6 @@ void loop() {
           }
         },
         prev_turning_edge);
-      break;
-
-    default:
-      Serial.println("default");
-      car_stop();
-      // do_actions_duration(100, []() {
-      // });
       break;
   }
   delay(1);
