@@ -1,6 +1,8 @@
 #ifndef DIRECTION_H_
 #define DIRECTION_H_
 
+#include "common.h"
+
 enum class Edge_direction
 {
     FRONT,

@@ -17,12 +17,12 @@ Ultrasonic::Ultrasonic(USReader reader_src, USWriter writer_src) : writer(writer
 }
 
 // double detect_obj_distance(uint8_t trigger_pin, uint8_t echo_pin)
-double detect_obj_distance(USWriter writer, USReader reader)
+double detect_obj_distance(USWriter writer, USReader reader, unsigned long distance)
 {
     digitalWrite(writer.pin, LOW);
     delayMicroseconds(2);
     digitalWrite(writer.pin, HIGH);
     delayMicroseconds(10);
     digitalWrite(writer.pin, LOW);
-    return pulseIn(reader.pin, HIGH, MAX_DISTANCE * 58) / 58.0;
+    return pulseIn(reader.pin, HIGH, distance * 58) / 58.0;
 }

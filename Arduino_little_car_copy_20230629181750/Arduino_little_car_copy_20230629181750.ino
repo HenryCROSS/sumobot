@@ -13,7 +13,9 @@
 
 #define MAX_DISTANCE 200
 
-enum class Edge_direction;
+#include <stdint.h>
+
+enum class Edge_direction
 {
     FRONT,
     FRONT_RIGHT,
@@ -265,6 +267,7 @@ void loop()
     }
     delay(1);
 }
+
 
 /*
   Tasks:
