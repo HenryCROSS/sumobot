@@ -239,7 +239,7 @@ struct Test {
       car_turn_right_by_speed(0, speed);
     }
   }
-  static void ultrasonic_left_test(bool left, bool right, int range, int speed) {
+  static void ultrasonic_test(bool left, bool right, int range, int speed) {
     auto info = obj_detected_info(range);
     if (left && info.left_sensor > -1 && right && info.right_sensor > -1) {
       car_go_forward(speed);
