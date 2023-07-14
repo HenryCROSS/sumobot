@@ -176,7 +176,7 @@ void do_actions_duration(unsigned long ms, Fn fn, Args... args) {
   delay(ms);
 }
 
-bool is_obj_in_distance(Obj_direction info, double range){
+bool is_obj_in_distance(Obj_direction info, double range) {
   return info.left_sensor <= range && info.right_sensor <= range;
 }
 
@@ -186,15 +186,15 @@ Obj_direction obj_detected_info(double range) {
   double distance_r = detect_obj_distance(TRIGGER_PIN_R, ECHO_PIN_R);
 
   return (Obj_direction){
-    .left_sensor = distance_l < range? distance_l: -1,
-    .right_sensor = distance_r < range? distance_r: -1,
+    .left_sensor = distance_l < range ? distance_l : -1,
+    .right_sensor = distance_r < range ? distance_r : -1,
   };
 }
 
-bool is_adjusting_needed (Obj_direction info, double max_range, double tolerance) {
-  if (abs(info.left_sensor - info.right_sensor) < tolerance){
+bool is_adjusting_needed(Obj_direction info, double max_range, double tolerance) {
+  if (abs(info.left_sensor - info.right_sensor) < tolerance) {
     return false;
-  } else if(info.left_sensor <= max_range || info.right_sensor <= max_range){
+  } else if (info.left_sensor <= max_range || info.right_sensor <= max_range) {
     return true;
   }
   return false;
@@ -221,22 +221,59 @@ void search_strategy(Edge_direction edge) {
 }
 
 struct Test {
-  static void motor_forward(bool left_wheel, bool right_wheel, int speed){
+  static void motor_forward(bool left_wheel, bool right_wheel, int speed) {
     if (left_wheel && right_wheel) {
       car_go_forward(speed);
     } else if (left_wheel) {
       car_turn_right(speed);
-    } else if(right_wheel) {
+    } else if (right_wheel) {
       car_turn_left(speed);
     }
   }
-  static void motor_backward(bool left_wheel, bool right_wheel, int speed){
+  static void motor_backward(bool left_wheel, bool right_wheel, int speed) {
     if (left_wheel && right_wheel) {
       car_go_backward(speed);
     } else if (left_wheel) {
       car_turn_left_by_speed(speed, 0);
-    } else if(right_wheel) {
+    } else if (right_wheel) {
       car_turn_right_by_speed(0, speed);
+    }
+  }
+  static void ultrasonic_left_test(bool left, bool right, int range, int speed) {
+    auto info = obj_detected_info(range);
+    if (left && info.left_sensor > -1 && right && info.right_sensor > -1) {
+      car_go_forward(speed);
+    } else if (left && info.left_sensor > -1) {
+      car_go_forward(speed);
+    } else if (right && info.right_sensor > -1) {
+      car_go_forward(speed);
+    }
+  }
+  static void qtr_test(bool frontL, bool frontR, bool back, bool noEdge, int speed) {
+    auto info = determine_edge(QTR_SENSOR_FL, QTR_SENSOR_FR, QTR_SENSOR_B);
+    switch (info) {
+      case Edge_direction::FRONT_LEFT:
+        if (frontL) {
+          car_go_forward(speed);
+        }
+        break;
+      case Edge_direction::FRONT_RIGHT:
+        if (frontR) {
+          car_go_forward(speed);
+        }
+        break;
+      case Edge_direction::BACK:
+        if (back) {
+          car_go_forward(speed);
+        }
+        break;
+      case Edge_direction::NONE:
+        if(noEdge){
+          car_go_backward(speed);
+        }
+        break;
+      default:
+        break;
     }
   }
 };
