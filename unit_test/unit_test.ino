@@ -1,4 +1,4 @@
-#define SPEEDA 10               // Motor A enable pin
+#define LEFT_SPEEDA 10               // Motor A enable pin
 #define SPEEDB 9                // Motor B enable pin
 #define RIGHT_WHEEL_FORWARD 3   // Motor B In1 pin
 #define RIGHT_WHEEL_BACKWARD 2  // Motor B In2 pin
@@ -239,10 +239,10 @@ struct Test {
       car_turn_right_by_speed(0, speed);
     }
   }
-  static void ultrasonic_left_test(bool left, bool right, int range, int speed) {
+  static void ultrasonic_test(bool left, bool right, int range, int speed) {
     auto info = obj_detected_info(range);
     if (left && info.left_sensor > -1 && right && info.right_sensor > -1) {
-      car_go_forward(speed);
+      car_go_backward(speed);
     } else if (left && info.left_sensor > -1) {
       car_go_forward(speed);
     } else if (right && info.right_sensor > -1) {
@@ -279,8 +279,9 @@ struct Test {
 };
 
 void loop() {
-  Test::motor_forward(true, true, 80);
+  Serial.println("working");
+  Test::motor_forward(true, true, 255);
   delay(3000);
-  Test::motor_backward(true, true, 80);
+  Test::motor_backward(true, true, 255);
   delay(3000);
 }
