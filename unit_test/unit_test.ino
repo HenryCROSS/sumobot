@@ -1,16 +1,16 @@
-#define LEFT_SPEEDA 10               // Motor A enable pin
-#define SPEEDB 9                // Motor B enable pin
-#define RIGHT_WHEEL_FORWARD 3   // Motor B In1 pin
-#define RIGHT_WHEEL_BACKWARD 2  // Motor B In2 pin
-#define LEFT_WHEEL_FORWARD 5    // Motor A In1 pin
-#define LEFT_WHEEL_BACKWARD 4   // Motor A In2 pin
-#define TRIGGER_PIN_L 6         // Ultrasonic sensor trigger pin
-#define ECHO_PIN_L 7            // Ultrasonic sensor echo pin
-#define TRIGGER_PIN_R 8         // Ultrasonic sensor trigger pin
-#define ECHO_PIN_R 9            // Ultrasonic sensor echo pin
-#define QTR_SENSOR_FL A5        // qtr sensor
-#define QTR_SENSOR_FR A4        // qtr sensor
-#define QTR_SENSOR_B A6         // qtr sensor
+#define LEFT_MOTOR 7               // Motor A enable pin
+#define RIGHT_MOTOR 12                // Motor B enable pin
+#define RIGHT_WHEEL_FORWARD 11   // Motor B In1 pin
+#define RIGHT_WHEEL_BACKWARD 10  // Motor B In2 pin
+#define LEFT_WHEEL_FORWARD 8    // Motor A In1 pin
+#define LEFT_WHEEL_BACKWARD 9   // Motor A In2 pin
+#define TRIGGER_PIN_L 2         // Ultrasonic sensor trigger pin
+#define ECHO_PIN_L 3            // Ultrasonic sensor echo pin
+#define TRIGGER_PIN_R 4         // Ultrasonic sensor trigger pin
+#define ECHO_PIN_R 5            // Ultrasonic sensor echo pin
+#define QTR_SENSOR_FL A1        // qtr sensor
+#define QTR_SENSOR_FR A0        // qtr sensor
+#define QTR_SENSOR_B A2         // qtr sensor
 
 #define MAX_DISTANCE 200
 
@@ -43,8 +43,8 @@ void setup() {
   pinMode(LEFT_WHEEL_BACKWARD, OUTPUT);
   pinMode(RIGHT_WHEEL_FORWARD, OUTPUT);
   pinMode(RIGHT_WHEEL_BACKWARD, OUTPUT);
-  pinMode(SPEEDA, OUTPUT);
-  pinMode(SPEEDB, OUTPUT);
+  pinMode(LEFT_MOTOR, OUTPUT);
+  pinMode(RIGHT_MOTOR, OUTPUT);
   pinMode(QTR_SENSOR_FL, INPUT);
   pinMode(QTR_SENSOR_FR, INPUT);
   pinMode(QTR_SENSOR_B, INPUT);
@@ -74,15 +74,15 @@ void wheel_move_speed(uint8_t pin, int speed) {
 }
 
 void car_go_forward(int speed) {
-  wheel_move_speed(SPEEDA, speed);
-  wheel_move_speed(SPEEDB, speed);
+  wheel_move_speed(LEFT_MOTOR, speed);
+  wheel_move_speed(RIGHT_MOTOR, speed);
   wheel_forward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
   wheel_forward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
 
 void car_go_backward(int speed) {
-  wheel_move_speed(SPEEDA, speed);
-  wheel_move_speed(SPEEDB, speed);
+  wheel_move_speed(LEFT_MOTOR, speed);
+  wheel_move_speed(RIGHT_MOTOR, speed);
   wheel_backward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
   wheel_backward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
@@ -103,15 +103,15 @@ void car_go_random(int speed) {
 }
 
 void car_turn_right_by_speed(int left_wheel_forward_speed, int right_wheel_backward_speed) {
-  wheel_move_speed(SPEEDA, left_wheel_forward_speed);
-  wheel_move_speed(SPEEDB, right_wheel_backward_speed);
+  wheel_move_speed(LEFT_MOTOR, left_wheel_forward_speed);
+  wheel_move_speed(RIGHT_MOTOR, right_wheel_backward_speed);
   wheel_forward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
   wheel_backward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
 
 void car_turn_left_by_speed(int left_wheel_backward_speed, int right_wheel_forward_speed) {
-  wheel_move_speed(SPEEDA, left_wheel_backward_speed);
-  wheel_move_speed(SPEEDB, right_wheel_forward_speed);
+  wheel_move_speed(LEFT_MOTOR, left_wheel_backward_speed);
+  wheel_move_speed(RIGHT_MOTOR, right_wheel_forward_speed);
   wheel_forward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
   wheel_backward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
 }
