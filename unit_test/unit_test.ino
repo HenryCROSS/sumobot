@@ -1,18 +1,49 @@
-#define LEFT_MOTOR 7               // Motor A enable pin
-#define RIGHT_MOTOR 12                // Motor B enable pin
+#define LEFT_MOTOR 7             // Motor A enable pin
+#define RIGHT_MOTOR 12           // Motor B enable pin
 #define RIGHT_WHEEL_FORWARD 11   // Motor B In1 pin
 #define RIGHT_WHEEL_BACKWARD 10  // Motor B In2 pin
-#define LEFT_WHEEL_FORWARD 8    // Motor A In1 pin
-#define LEFT_WHEEL_BACKWARD 9   // Motor A In2 pin
-#define TRIGGER_PIN_L 2         // Ultrasonic sensor trigger pin
-#define ECHO_PIN_L 3            // Ultrasonic sensor echo pin
-#define TRIGGER_PIN_R 4         // Ultrasonic sensor trigger pin
-#define ECHO_PIN_R 5            // Ultrasonic sensor echo pin
-#define QTR_SENSOR_FL A1        // qtr sensor
-#define QTR_SENSOR_FR A0        // qtr sensor
-#define QTR_SENSOR_B A2         // qtr sensor
+#define LEFT_WHEEL_FORWARD 8     // Motor A In1 pin
+#define LEFT_WHEEL_BACKWARD 9    // Motor A In2 pin
+#define TRIGGER_PIN_L 2          // Ultrasonic sensor trigger pin
+#define ECHO_PIN_L 3             // Ultrasonic sensor echo pin
+#define TRIGGER_PIN_R 4          // Ultrasonic sensor trigger pin
+#define ECHO_PIN_R 5             // Ultrasonic sensor echo pin
+#define QTR_SENSOR_FL A1         // qtr sensor
+#define QTR_SENSOR_FR A0         // qtr sensor
+#define QTR_SENSOR_B A2          // qtr sensor
 
 #define MAX_DISTANCE 200
+
+template<class T1, class T2>
+class Pair {
+public:
+  T1 fst;
+  T2 snd;
+
+  Pair(T1 fst, T2 snd)
+    : fst(fst), snd(snd) {}
+
+  Pair(const Pair& src)
+    : fst(src.fst), snd(src.snd) {}
+  Pair& operator=(const Pair& src) {
+    fst = src.fst;
+    snd = src.snd;
+  }
+};
+
+template<typename T>
+class Newtype {
+public:
+  explicit Newtype<T>(T val)
+    : val(val) {}
+
+  Newtype(const Newtype& src)
+    : val(src.val) {}
+  Newtype& operator=(const Newtype& src) {
+    val = src.val;
+  }
+  T val;
+};
 
 enum class Edge_direction {
   FRONT,
@@ -25,7 +56,7 @@ enum class Edge_direction {
 enum class Adjust_attck_direction {
   TURN_LEFT,
   TURN_RIGHT,
-  NOTHING,
+  KEEP_GOING,
 };
 
 struct Obj_direction {
@@ -45,9 +76,9 @@ void setup() {
   pinMode(RIGHT_WHEEL_BACKWARD, OUTPUT);
   pinMode(LEFT_MOTOR, OUTPUT);
   pinMode(RIGHT_MOTOR, OUTPUT);
-  pinMode(QTR_SENSOR_FL, INPUT);
-  pinMode(QTR_SENSOR_FR, INPUT);
-  pinMode(QTR_SENSOR_B, INPUT);
+  // pinMode(QTR_SENSOR_FL, INPUT);
+  // pinMode(QTR_SENSOR_FR, INPUT);
+  // pinMode(QTR_SENSOR_B, INPUT);
 
   randomSeed(analogRead(0));
   delay(5000);
@@ -124,8 +155,33 @@ void car_turn_right(int speed) {
   car_turn_right_by_speed(0, speed);
 }
 
-void car_turn_attack_direction(Obj_direction info, int speed) {
-  //TODO: adjust direction based on the info
+Pair<Adjust_attck_direction, int> car_adjustment_measurement(Obj_direction info, int tolerance) {
+  int gap = info.left_sensor - info.right_sensor;
+  if (gap > tolerance)
+    return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::TURN_LEFT, gap);
+
+  gap = abs(gap);
+  if (gap > tolerance)
+    return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::TURN_RIGHT, gap);
+
+  return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::KEEP_GOING, 0);
+}
+
+void car_adjust_attack_direction(Obj_direction info, double tolerance, int speed) {
+  auto result = car_adjustment_measurement(info, tolerance);
+  double factor = (abs(result.snd) - tolerance) / result.snd;
+
+  switch (result.fst) {
+    case Adjust_attck_direction::TURN_LEFT:
+      car_turn_left(speed * factor);
+      break;
+    case Adjust_attck_direction::TURN_RIGHT:
+      car_turn_right(speed * factor);
+      break;
+    default:
+      break;
+      ;
+  }
 }
 
 void car_stop(void) {
@@ -145,19 +201,35 @@ double detect_obj_distance(uint8_t trigger_pin, uint8_t echo_pin) {
 Edge_direction determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sensor_front_right, uint8_t qtr_sensor_back) {
   int frontL = analogRead(qtr_sensor_front_left);
   int frontR = analogRead(qtr_sensor_front_right);
-  int back = analogRead(qtr_sensor_back);
-  // Serial.print("FrontL: ");
+  // int back = analogRead(qtr_sensor_back);
+  // int frontR = 0;
+  int back = 0;
+  Serial.print("FrontL: ");
   // Serial.println(frontL);
 
+  Serial.print(frontL);
+  Serial.print(":L /");
+  Serial.print(frontR);
+  Serial.print(":R /");
+  Serial.print(back);
+  Serial.print(":B /");
+  Serial.println("Front");
   if (frontL <= 400 && frontR <= 400) {
     return Edge_direction::FRONT;
   } else if (frontL <= 400) {
+    // Serial.print(frontR);
+    // Serial.println("FrontLeft");
     return Edge_direction::FRONT_LEFT;
   } else if (frontR <= 400) {
+    // Serial.print(frontR);
+    // Serial.println("FrontRight");
     return Edge_direction::FRONT_RIGHT;
   } else if (back <= 400) {
+    // Serial.print(back);
+    // Serial.println("Back");
     return Edge_direction::BACK;
   } else {
+    // Serial.println("None");
     return Edge_direction::NONE;
   }
 }
@@ -177,7 +249,7 @@ void do_actions_duration(unsigned long ms, Fn fn, Args... args) {
 }
 
 bool is_obj_in_distance(Obj_direction info, double range) {
-  return info.left_sensor <= range && info.right_sensor <= range;
+  return info.left_sensor <= range || info.right_sensor <= range;
 }
 
 // range ~= 60
@@ -192,8 +264,8 @@ Obj_direction obj_detected_info(double range) {
 }
 
 bool is_adjusting_needed(Obj_direction info, double max_range, double tolerance) {
-  if (abs(info.left_sensor - info.right_sensor) < tolerance) {
-    return false;
+  if (abs(info.left_sensor - info.right_sensor) > tolerance) {
+    return true;
   } else if (info.left_sensor <= max_range || info.right_sensor <= max_range) {
     return true;
   }
@@ -268,7 +340,7 @@ struct Test {
         }
         break;
       case Edge_direction::NONE:
-        if(noEdge){
+        if (noEdge) {
           car_go_backward(speed);
         }
         break;
@@ -276,12 +348,26 @@ struct Test {
         break;
     }
   }
+  static void trace_mode() {
+    auto speed = 70;
+    auto range = 20.0;
+    auto tolerance = 1.2;
+    auto info = obj_detected_info(range);
+    auto delay_ms = 10;
+
+    if (is_obj_in_distance(info, range)) {
+      if (is_adjusting_needed(info, range, tolerance)) {
+        car_adjust_attack_direction(info, tolerance, speed);
+      } else {
+        car_go_forward(speed);
+      }
+    }
+
+    delay(delay_ms);
+  }
 };
 
 void loop() {
   Serial.println("working");
-  Test::motor_forward(true, true, 255);
-  delay(3000);
-  Test::motor_backward(true, true, 255);
-  delay(3000);
+  Test::trace_mode();
 }
