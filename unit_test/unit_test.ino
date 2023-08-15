@@ -158,11 +158,11 @@ void car_turn_right(int speed) {
 Pair<Adjust_attck_direction, int> car_adjustment_measurement(Obj_direction info, int tolerance) {
   int gap = info.left_sensor - info.right_sensor;
   if (gap > tolerance)
-    return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::TURN_LEFT, gap);
+    return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::TURN_RIGHT, gap);
 
   gap = abs(gap);
   if (gap > tolerance)
-    return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::TURN_RIGHT, gap);
+    return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::TURN_LEFT, gap);
 
   return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::KEEP_GOING, 0);
 }
