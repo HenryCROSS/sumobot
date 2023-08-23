@@ -14,37 +14,6 @@
 
 #define MAX_DISTANCE 200
 
-template<class T1, class T2>
-class Pair {
-public:
-  T1 fst;
-  T2 snd;
-
-  Pair(T1 fst, T2 snd)
-    : fst(fst), snd(snd) {}
-
-  Pair(const Pair& src)
-    : fst(src.fst), snd(src.snd) {}
-  Pair& operator=(const Pair& src) {
-    fst = src.fst;
-    snd = src.snd;
-  }
-};
-
-template<typename T>
-class Newtype {
-public:
-  explicit Newtype<T>(T val)
-    : val(val) {}
-
-  Newtype(const Newtype& src)
-    : val(src.val) {}
-  Newtype& operator=(const Newtype& src) {
-    val = src.val;
-  }
-  T val;
-};
-
 enum class Edge_direction {
   FRONT,
   FRONT_RIGHT,
@@ -59,9 +28,90 @@ enum class Adjust_attck_direction {
   KEEP_GOING,
 };
 
+// Tuple class
+template <typename T1, typename T2>
+class Tuple {
+private:
+    T1 fst;
+    T2 snd;
+
+public:
+    Tuple(const T1& a, const T2& b) : fst(a), snd(b) {}
+
+    T1 getFst() const { return fst; }
+    T2 getSnd() const { return snd; }
+};
+
+template<class T1, class T2>
+class Pair {
+public:
+  T1 fst;
+  T2 snd;
+
+  Pair(const T1& fst, const T2& snd)
+    : fst(fst), snd(snd) {}
+
+  Pair(const Pair& src)
+    : fst(src.fst), snd(src.snd) {}
+  Pair& operator=(const Pair& src) {
+    if (this != &src) {
+      fst = src.fst;
+      snd = src.snd;
+    }
+    return *this;
+  }
+};
+
+template<typename T>
+class Maybe {
+private:
+  bool isJust;
+  T value;
+
+public:
+  Maybe()
+    : isJust(false) {}
+
+  explicit Maybe(const T& val)
+    : isJust(true), value(val) {}
+
+  bool hasValue() const {
+    return isJust;
+  }
+
+  // call this after call hasValue()
+  T getValue() const {
+    return value;
+  }
+
+  static Maybe Nothing() {
+    return Maybe();
+  }
+};
+
+template<typename T, class Tag>
+class NewType {
+  T value;
+public:
+  explicit NewType(const T& v)
+    : value(v) {}
+
+  T& get() {
+    return value;
+  }
+  const T& get() const {
+    return value;
+  }
+};
+
+// Tag
+struct PinIdTag {};
+
+using PinId = NewType<int, PinIdTag>;
+
 struct Obj_direction {
-  double left_sensor;
-  double right_sensor;
+  Maybe<double> left_sensor;
+  Maybe<double> right_sensor;
 };
 
 void setup() {
@@ -156,13 +206,15 @@ void car_turn_right(int speed) {
 }
 
 Pair<Adjust_attck_direction, int> car_adjustment_measurement(Obj_direction info, int tolerance) {
-  int gap = info.left_sensor - info.right_sensor;
-  if (gap > tolerance)
-    return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::TURN_RIGHT, gap);
+  if (info.left_sensor.hasValue() && info.right_sensor.hasValue()) {
+    int gap = info.left_sensor.getValue() - info.right_sensor.getValue();
+    if (gap > tolerance)
+      return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::TURN_RIGHT, gap);
 
-  gap = abs(gap);
-  if (gap > tolerance)
-    return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::TURN_LEFT, gap);
+    gap = abs(gap);
+    if (gap > tolerance)
+      return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::TURN_LEFT, gap);
+  }
 
   return Pair<Adjust_attck_direction, int>(Adjust_attck_direction::KEEP_GOING, 0);
 }
@@ -249,7 +301,7 @@ void do_actions_duration(unsigned long ms, Fn fn, Args... args) {
 }
 
 bool is_obj_in_distance(Obj_direction info, double range) {
-  return info.left_sensor <= range || info.right_sensor <= range;
+  return (info.left_sensor.hasValue() && info.left_sensor.getValue() <= range) || (info.right_sensor.hasValue() && info.right_sensor.getValue() <= range);
 }
 
 // range ~= 60
@@ -258,16 +310,19 @@ Obj_direction obj_detected_info(double range) {
   double distance_r = detect_obj_distance(TRIGGER_PIN_R, ECHO_PIN_R);
 
   return (Obj_direction){
-    .left_sensor = distance_l < range ? distance_l : -1,
-    .right_sensor = distance_r < range ? distance_r : -1,
+    .left_sensor = distance_l < range ? Maybe<double>(distance_l) : Maybe<double>::Nothing(),
+    .right_sensor = distance_r < range ? Maybe<double>(distance_r) : Maybe<double>::Nothing(),
   };
 }
 
 bool is_adjusting_needed(Obj_direction info, double max_range, double tolerance) {
-  if (abs(info.left_sensor - info.right_sensor) > tolerance) {
-    return true;
-  } else if (info.left_sensor <= max_range || info.right_sensor <= max_range) {
-    return true;
+  if (info.left_sensor.hasValue() && info.right_sensor.hasValue()) {
+    auto lv = info.left_sensor.getValue();
+    auto rv = info.right_sensor.getValue();
+
+    if (abs(lv - rv) > tolerance) {
+      return true;
+    }
   }
   return false;
 }
@@ -313,11 +368,11 @@ struct Test {
   }
   static void ultrasonic_test(bool left, bool right, int range, int speed) {
     auto info = obj_detected_info(range);
-    if (left && info.left_sensor > -1 && right && info.right_sensor > -1) {
+    if (left && info.left_sensor.hasValue() && right && info.right_sensor.hasValue()) {
       car_go_backward(speed);
-    } else if (left && info.left_sensor > -1) {
+    } else if (left && info.left_sensor.hasValue()) {
       car_go_forward(speed);
-    } else if (right && info.right_sensor > -1) {
+    } else if (right && info.right_sensor.hasValue()) {
       car_go_forward(speed);
     }
   }
