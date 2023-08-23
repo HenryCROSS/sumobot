@@ -29,10 +29,10 @@ enum class Adjust_attck_direction {
   KEEP_GOING,
 };
 
-template<typename Fn, typename T>
+template<typename FunctorType, typename ValueType>
 class Functor {
 public:
-  virtual Fn fmap(Fn (*func)(T)) const = 0;
+  virtual FunctorType fmap(ValueType (*func)(ValueType)) const = 0;
 };
 
 template<typename T1, typename T2>
@@ -74,7 +74,7 @@ public:
 };
 
 template<typename T>
-class Maybe : public Functor<T, T> {
+class Maybe : public Functor<Maybe<T>, T> {
 private:
   bool isJust;
   T value;
@@ -103,11 +103,11 @@ public:
   }
 
   // Testing
-  T fmap(T (*func)(T)) const override {
+  Maybe<T> fmap(T (*func)(T)) const override {
     if (isJust) {
-      return func(value);
+      return Maybe<T>(func(value));
     } else {
-      return T();
+      return Maybe<T>::Nothing();
     }
   }
 };
