@@ -14,6 +14,7 @@
 
 #define MAX_DISTANCE 200
 
+
 enum class Edge_direction {
   FRONT,
   FRONT_RIGHT,
@@ -28,18 +29,28 @@ enum class Adjust_attck_direction {
   KEEP_GOING,
 };
 
-// Tuple class
-template <typename T1, typename T2>
+template<typename Fn, typename T>
+class Functor {
+public:
+  virtual Fn fmap(Fn (*func)(T)) const = 0;
+};
+
+template<typename T1, typename T2>
 class Tuple {
 private:
-    T1 fst;
-    T2 snd;
+  T1 fst;
+  T2 snd;
 
 public:
-    Tuple(const T1& a, const T2& b) : fst(a), snd(b) {}
+  Tuple(const T1& a, const T2& b)
+    : fst(a), snd(b) {}
 
-    T1 getFst() const { return fst; }
-    T2 getSnd() const { return snd; }
+  T1 getFst() const {
+    return fst;
+  }
+  T2 getSnd() const {
+    return snd;
+  }
 };
 
 template<class T1, class T2>
@@ -63,7 +74,7 @@ public:
 };
 
 template<typename T>
-class Maybe {
+class Maybe : public Functor<T, T> {
 private:
   bool isJust;
   T value;
@@ -81,11 +92,23 @@ public:
 
   // call this after call hasValue()
   T getValue() const {
+    if (!isJust) {
+      return T();
+    }
     return value;
   }
 
   static Maybe Nothing() {
     return Maybe();
+  }
+
+  // Testing
+  T fmap(T (*func)(T)) const override {
+    if (isJust) {
+      return func(value);
+    } else {
+      return T();
+    }
   }
 };
 
