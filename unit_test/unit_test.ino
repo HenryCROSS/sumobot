@@ -42,6 +42,7 @@ public:
   virtual M bind(M (*func)(T)) const = 0;
 };
 
+
 template<typename T1, typename T2>
 class Tuple {
 private:
@@ -223,6 +224,31 @@ public:
   }
 };
 
+// should i go c++17?
+// BEGIN compose
+/* Example:
+  auto f = [](int x) { return x + 1; };
+  auto g = [](int x) { return x * 2; };
+  auto h = [](int x) { return x - 3; };
+
+  auto combined = compose(f, g, h);
+  std::cout << combined(3);  // ouput 4, because ((3 - 3) * 2) + 1 = 4
+*/
+// template<typename F, typename G>
+// auto compose(F f, G g) {
+//   return [f, g](auto x) {
+//     return f(g(x));
+//   };
+// }
+
+// template<typename F, typename... Funcs>
+// auto compose(F f, Funcs... funcs) {
+//   return [f, funcs...](auto x) {
+//     return f(compose(funcs...)(x));
+//   };
+// }
+// END compose
+
 // Tag
 struct PinIdTag {};
 struct ErrIdTag {};
@@ -289,21 +315,6 @@ void car_go_backward(int speed) {
   wheel_backward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
 
-void car_go_random(int speed) {
-  long rand_num = random(3);
-  switch (rand_num) {
-    case 0:
-      car_go_forward(speed);
-      break;
-    case 1:
-      car_turn_left(speed);
-      break;
-    case 2:
-      car_turn_right(speed);
-      break;
-  }
-}
-
 void car_turn_right_by_speed(int left_wheel_forward_speed, int right_wheel_backward_speed) {
   wheel_move_speed(LEFT_MOTOR, left_wheel_forward_speed);
   wheel_move_speed(RIGHT_MOTOR, right_wheel_backward_speed);
@@ -324,6 +335,21 @@ void car_turn_left(int speed) {
 
 void car_turn_right(int speed) {
   car_turn_right_by_speed(0, speed);
+}
+
+void car_go_random(int speed) {
+  long rand_num = random(3);
+  switch (rand_num) {
+    case 0:
+      car_go_forward(speed);
+      break;
+    case 1:
+      car_turn_left(speed);
+      break;
+    case 2:
+      car_turn_right(speed);
+      break;
+  }
 }
 
 // TODO: 函数不应该再次计算是否应该要拐弯才对，应该要计算拐多少，或许需要重新考虑
