@@ -112,6 +112,70 @@ public:
   }
 };
 
+// testing
+template<typename L, typename R>
+class Either : public Functor<Either<L, R>, R> {
+private:
+  enum class Tag {
+    LEFT,
+    RIGHT
+  } tag;
+
+  union {
+    L leftValue;
+    R rightValue;
+  };
+
+public:
+  static Either Left(const L& value) {
+    return Either(Tag::LEFT, value, R());
+  }
+
+  static Either Right(const R& value) {
+    return Either(Tag::RIGHT, L(), value);
+  }
+
+  bool isLeft() const {
+    return tag == Tag::LEFT;
+  }
+
+  bool isRight() const {
+    return tag == Tag::RIGHT;
+  }
+
+  L getLeft() const {
+    if (isRight()) {
+      R();
+    }
+    return leftValue;
+  }
+
+  R getRight() const {
+    if (isLeft()) {
+      L();
+    }
+    return rightValue;
+  }
+
+  Either<L, R> fmap(R (*func)(R)) const override {
+    if (isRight()) {
+      return Either<L, R>::Right(func(rightValue));
+    } else {
+      return *this;  // return the Left value unchanged
+    }
+  }
+
+private:
+  Either(Tag t, const L& left, const R& right)
+    : tag(t) {
+    if (t == Tag::LEFT) {
+      leftValue = left;
+    } else {
+      rightValue = right;
+    }
+  }
+};
+
 template<typename T, class Tag>
 class NewType {
   T value;
@@ -129,8 +193,10 @@ public:
 
 // Tag
 struct PinIdTag {};
+struct ErrIdTag {};
 
 using PinId = NewType<int, PinIdTag>;
+using ErrId = NewType<int, ErrIdTag>;
 
 struct Obj_direction {
   Maybe<double> left_sensor;
