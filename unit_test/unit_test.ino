@@ -35,6 +35,13 @@ public:
   virtual FunctorType fmap(ValueType (*func)(ValueType)) const = 0;
 };
 
+template<typename M, typename T>
+class Monad {
+public:
+  virtual M returnM(const T& value) const = 0;
+  virtual M bind(M (*func)(T)) const = 0;
+};
+
 template<typename T1, typename T2>
 class Tuple {
 private:
@@ -74,7 +81,7 @@ public:
 };
 
 template<typename T>
-class Maybe : public Functor<Maybe<T>, T> {
+class Maybe : public Functor<Maybe<T>, T>, public Monad<Maybe<T>, T> {
 private:
   bool isJust;
   T value;
@@ -110,11 +117,24 @@ public:
       return Maybe<T>::Nothing();
     }
   }
+
+  Maybe<T> returnM(const T& val) const override {
+    return Maybe<T>(val);
+  }
+
+  // m a -> (a -> m b) -> m b
+  Maybe<T> bind(Maybe<T> (*func)(T)) const override {
+    if (isJust) {
+      return func(value);
+    } else {
+      return Maybe<T>::Nothing();
+    }
+  }
 };
 
 // testing
 template<typename L, typename R>
-class Either : public Functor<Either<L, R>, R> {
+class Either : public Functor<Either<L, R>, R>, public Monad<Either<L, R>, R> {
 private:
   enum class Tag {
     LEFT,
@@ -162,6 +182,18 @@ public:
       return Either<L, R>::Right(func(rightValue));
     } else {
       return *this;  // return the Left value unchanged
+    }
+  }
+
+  Either<L, R> returnM(const R& val) const override {
+    return Either<L, R>::Right(val);
+  }
+
+  Either<L, R> bind(Either<L, R> (*func)(R)) const override {
+    if (isRight()) {
+      return func(rightValue);
+    } else {
+      return *this;  // Return the Left value unchanged.
     }
   }
 
