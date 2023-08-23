@@ -195,7 +195,7 @@ public:
 struct PinIdTag {};
 struct ErrIdTag {};
 
-using PinId = NewType<int, PinIdTag>;
+using PinId = NewType<uint8_t, PinIdTag>;
 using ErrId = NewType<int, ErrIdTag>;
 
 struct Obj_direction {
@@ -294,6 +294,7 @@ void car_turn_right(int speed) {
   car_turn_right_by_speed(0, speed);
 }
 
+// TODO: 函数不应该再次计算是否应该要拐弯才对，应该要计算拐多少，或许需要重新考虑
 Pair<Adjust_attck_direction, int> car_adjustment_measurement(Obj_direction info, int tolerance) {
   if (info.left_sensor.hasValue() && info.right_sensor.hasValue()) {
     int gap = info.left_sensor.getValue() - info.right_sensor.getValue();
