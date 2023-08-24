@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #define LEFT_MOTOR 7             // Motor A enable pin
 #define RIGHT_MOTOR 12           // Motor B enable pin
 #define RIGHT_WHEEL_FORWARD 11   // Motor B In1 pin
@@ -13,8 +15,6 @@
 #define QTR_SENSOR_B A2          // qtr sensor
 
 #define MAX_DISTANCE 200
-
-#include <alloca.h>
 
 enum class Edge_direction {
   FRONT,
@@ -235,19 +235,19 @@ public:
   auto combined = compose(f, g, h);
   std::cout << combined(3);  // ouput 4, because ((3 - 3) * 2) + 1 = 4
 */
-// template<typename F, typename G>
-// auto compose(F f, G g) {
-//   return [f, g](auto x) {
-//     return f(g(x));
-//   };
-// }
+template<typename F, typename G>
+auto compose(F f, G g) {
+  return [f, g](auto x) {
+    return f(g(x));
+  };
+}
 
-// template<typename F, typename... Funcs>
-// auto compose(F f, Funcs... funcs) {
-//   return [f, funcs...](auto x) {
-//     return f(compose(funcs...)(x));
-//   };
-// }
+template<typename F, typename... Funcs>
+auto compose(F f, Funcs... funcs) {
+  return [f, funcs...](auto x) {
+    return f(compose(funcs...)(x));
+  };
+}
 // END compose
 
 // Tag
