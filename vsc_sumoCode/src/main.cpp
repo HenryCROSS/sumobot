@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include "pin.h"
+#include "pin_config.h"
 
 #define MAX_DISTANCE 200
 
