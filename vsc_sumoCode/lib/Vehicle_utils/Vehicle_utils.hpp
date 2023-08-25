@@ -1,7 +1,7 @@
 #ifndef _VEHICLE_UTILS_HPP_
 #define _VEHICLE_UTILS_HPP_
 
-#include <Functional_tools.hpp>
+#include <Arduino.h>
 #include <Tools.hpp>
 #include <Vehicle_types.hpp>
 

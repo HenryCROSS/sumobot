@@ -1,6 +1,5 @@
-#include <Configs.h>
-
 #include <Arduino.h>
+#include <Configs.h>
 
 #include "Vehicle_utils.hpp"
 

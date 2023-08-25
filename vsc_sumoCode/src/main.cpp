@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <Functional_tools.hpp>
 #include <Configs.h>
 #include <Tools.hpp>
 #include <Vehicle_actions.hpp>

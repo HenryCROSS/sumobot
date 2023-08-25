@@ -1,7 +1,7 @@
 #ifndef _VEHICLE_TYPES_HPP_
 #define _VEHICLE_TYPES_HPP_
 
-#include <Functional_tools.hpp>
+#include <Tools.hpp>
 
 enum class Edge_Signal
 {
