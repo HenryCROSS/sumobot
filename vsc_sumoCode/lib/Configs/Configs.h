@@ -1,4 +1,5 @@
 #ifndef _PIN_H_
+#define _PIN_H_
 
 #define LEFT_MOTOR 7            // Motor A enable pin
 #define RIGHT_MOTOR 12          // Motor B enable pin
@@ -13,5 +14,7 @@
 #define QTR_SENSOR_FL A1        // qtr sensor
 #define QTR_SENSOR_FR A0        // qtr sensor
 #define QTR_SENSOR_B A2         // qtr sensor
+
+#define MAX_DISTANCE 200
 
 #endif // !_PIN_H_
