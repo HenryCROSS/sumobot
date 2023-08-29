@@ -1,8 +1,6 @@
 #ifndef _TYPES_HPP_
 #define _TYPES_HPP_
 
-#include <Functional_interface.hpp>
-
 template <typename T, class Tag>
 class NewType
 {
@@ -67,7 +65,7 @@ public:
 };
 
 template <typename T>
-class Maybe : public Functor<Maybe<T>, T>, public Monad<Maybe<T>, T>
+class Maybe
 {
 private:
     bool isJust;
@@ -99,42 +97,11 @@ public:
     {
         return Maybe();
     }
-
-    // Testing
-    Maybe<T> fmap(T (*func)(T)) const override
-    {
-        if (isJust)
-        {
-            return Maybe<T>(func(value));
-        }
-        else
-        {
-            return Maybe<T>::Nothing();
-        }
-    }
-
-    Maybe<T> returnM(const T &val) const override
-    {
-        return Maybe<T>(val);
-    }
-
-    // m a -> (a -> m b) -> m b
-    Maybe<T> bind(Maybe<T> (*func)(T)) const override
-    {
-        if (isJust)
-        {
-            return func(value);
-        }
-        else
-        {
-            return Maybe<T>::Nothing();
-        }
-    }
 };
 
 // testing
 template <typename L, typename R>
-class Either : public Functor<Either<L, R>, R>, public Monad<Either<L, R>, R>
+class Either
 {
 private:
     enum class Tag
@@ -188,35 +155,6 @@ public:
         return rightValue;
     }
 
-    Either<L, R> fmap(R (*func)(R)) const override
-    {
-        if (isRight())
-        {
-            return Either<L, R>::Right(func(rightValue));
-        }
-        else
-        {
-            return *this; // return the Left value unchanged
-        }
-    }
-
-    Either<L, R> returnM(const R &val) const override
-    {
-        return Either<L, R>::Right(val);
-    }
-
-    Either<L, R> bind(Either<L, R> (*func)(R)) const override
-    {
-        if (isRight())
-        {
-            return func(rightValue);
-        }
-        else
-        {
-            return *this; // Return the Left value unchanged.
-        }
-    }
-
 private:
     Either(Tag t, const L &left, const R &right)
         : tag(t)
@@ -232,33 +170,6 @@ private:
     }
 };
 
-// BEGIN compose
-/* Example:
-  auto f = [](int x) { return x + 1; };
-  auto g = [](int x) { return x * 2; };
-  auto h = [](int x) { return x - 3; };
-
-  auto combined = compose(f, g, h);
-  std::cout << combined(3);  // ouput 4, because ((3 - 3) * 2) + 1 = 4
-*/
-template <typename F, typename G>
-auto compose(F f, G g)
-{
-    return [f, g](auto x)
-    {
-        return f(g(x));
-    };
-}
-
-template <typename F, typename... Funcs>
-auto compose(F f, Funcs... funcs)
-{
-    return [f, funcs...](auto x)
-    {
-        return f(compose(funcs...)(x));
-    };
-}
-// END compose
 
 /*
   Example:
