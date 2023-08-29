@@ -146,3 +146,41 @@ int main() {
     }
 }
 ```
+``` cpp
+int addOne(const int& x) {
+    return x + 1;
+}
+
+int multiplyByTwo(const int& x) {
+    return x * 2;
+}
+
+int subtractThree(const int& x) {
+    return x - 3;
+}
+
+int divideByTwo(const int& x) {
+    return x / 2;
+}
+
+int main() {
+    // 创建一个组合函数
+    auto combinedFunction = compose(addOne, multiplyByTwo, subtractThree, divideByTwo);
+    
+    Maybe<int> justFour(4);
+    
+    // 使用组合函数
+    Maybe<int> intermediateResult = fmap(combinedFunction, justFour);
+    
+    // 为了简化，我们可以连续使用fmap
+    Maybe<int> result = fmap(divideByTwo, fmap(subtractThree, fmap(multiplyByTwo, fmap(addOne, justFour))));
+    
+    if (result.isJust) {
+        std::cout << result.value << std::endl;
+        // 输出 2. 因为 (((4 + 1) * 2) - 3) / 2 = 2
+    } else {
+        std::cout << "No result" << std::endl;
+    }
+}
+
+```

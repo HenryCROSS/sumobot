@@ -114,7 +114,7 @@ struct Test
     }
     static void trace_mode()
     {
-        auto speed = 70;
+        auto speed = 130;
         auto range = 20.0;
         auto tolerance = 1.2;
         auto info = obj_detected_info(range);
