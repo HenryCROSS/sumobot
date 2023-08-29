@@ -1,6 +1,8 @@
 #ifndef _TYPES_HPP_
 #define _TYPES_HPP_
 
+#include <Arduino.h>
+
 template <typename T, class Tag>
 class NewType
 {

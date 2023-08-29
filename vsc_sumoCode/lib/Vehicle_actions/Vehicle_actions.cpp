@@ -1,3 +1,5 @@
+#include <Functional_interface.hpp>
+
 #include "Vehicle_actions.hpp"
 
 void search_strategy(Maybe<Edge_Signal> edge)

@@ -37,8 +37,8 @@ auto compose(F f, Funcs... funcs)
 // For Maybe
 template <typename T, typename U>
 Maybe<U> fmap(U (*func)(const T&), const Maybe<T>& maybe) {
-    if (maybe.isJust) {
-        return Maybe<U>(func(maybe.value));
+    if (maybe.hasValue()) {
+        return Maybe<U>(func(maybe.getValue()));
     } else {
         return Maybe<U>();
     }
@@ -81,10 +81,10 @@ Either<L, R> returnM(const R& value) {
 
 template <typename L, typename R, typename U>
 Either<L, U> bind(const Either<L, R>& either, Either<L, U> (*func)(const R&)) {
-    if (either.isRight) {
-        return func(either.rightValue);
+    if (either.isRight()) {
+        return func(either.getRight());
     } else {
-        return Either<L, U>::Left(either.leftValue);
+        return Either<L, U>::Left(either.getLeft());
     }
 }
 
