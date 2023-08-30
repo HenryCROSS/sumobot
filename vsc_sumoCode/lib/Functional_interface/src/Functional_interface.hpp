@@ -47,10 +47,10 @@ Maybe<U> fmap(U (*func)(const T&), const Maybe<T>& maybe) {
 // For Either
 template <typename L, typename R, typename U>
 Either<L, U> fmap(U (*func)(const R&), const Either<L, R>& either) {
-    if (either.isRight) {
-        return Either<L, U>::Right(func(either.rightValue));
+    if (either.isRight()) {
+        return Either<L, U>::Right(func(either.getRight()));
     } else {
-        return Either<L, U>::Left(either.leftValue);
+        return Either<L, U>::Left(either.getLeft());
     }
 }
 
@@ -66,8 +66,8 @@ Maybe<T> returnM(const T& value) {
 
 template <typename T, typename U>
 Maybe<U> bind(const Maybe<T>& maybe, Maybe<U> (*func)(const T&)) {
-    if (maybe.isJust) {
-        return func(maybe.value);
+    if (maybe.hasValue()) {
+        return func(maybe.getValue());
     } else {
         return Maybe<U>();
     }
