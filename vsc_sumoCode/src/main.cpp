@@ -24,6 +24,7 @@ void setup()
     // pinMode(QTR_SENSOR_B, INPUT);
 
     initScreen(SSD1306_SWITCHCAPVCC, 0x3C);
+    Serial.begin(9600);
 
     if (!global_display.hasValue())
     { // Address 0x3D for 128x64
@@ -36,7 +37,6 @@ void setup()
     }
 
     randomSeed(analogRead(0));
-    Serial.begin(9600);
 }
 
 struct Test
