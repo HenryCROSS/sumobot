@@ -6,4 +6,5 @@
 
 void search_strategy(Maybe<Edge_Signal> edge);
 
+
 #endif // !_VEHICLE_ACTIONS_HPP_

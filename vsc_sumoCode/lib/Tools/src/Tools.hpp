@@ -77,7 +77,7 @@ public:
     Maybe()
         : isJust(false) {}
 
-    explicit Maybe(const T &val)
+    explicit Maybe(T val)
         : isJust(true), value(val) {}
 
     bool hasValue() const
@@ -119,12 +119,12 @@ private:
     };
 
 public:
-    static Either Left(const L &value)
+    static Either Left(L value)
     {
         return Either(Tag::LEFT, value, R());
     }
 
-    static Either Right(const R &value)
+    static Either Right(R value)
     {
         return Either(Tag::RIGHT, L(), value);
     }
@@ -158,7 +158,7 @@ public:
     }
 
 private:
-    Either(Tag t, const L &left, const R &right)
+    Either(Tag t, L left, R right)
         : tag(t)
     {
         if (t == Tag::LEFT)
