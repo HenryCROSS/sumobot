@@ -62,6 +62,8 @@ void setup()
     // Display static text
     display.println("Hello, world!");
     display.display();
+    delay(100);
+    display.clearDisplay();
 }
 
 struct Test
