@@ -193,6 +193,8 @@ Obj_direction obj_detection_info(double range)
 {
     double distance_l = detect_obj_distance(TRIGGER_PIN_L, ECHO_PIN_L);
     double distance_r = detect_obj_distance(TRIGGER_PIN_R, ECHO_PIN_R);
+    Serial.println(String("L: ") + distance_l);
+    Serial.println(String("R: ") + distance_r);
 
     return (Obj_direction){
         .left_sensor = distance_l < range ? Maybe<double>(distance_l) : Maybe<double>::Nothing(),
