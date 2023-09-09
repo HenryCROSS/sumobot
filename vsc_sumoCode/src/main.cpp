@@ -228,5 +228,5 @@ void loop()
     // Display static text
     display.println("Hello, world!");
     display.display();
-    delay(100);
+    delay(500);
 }
