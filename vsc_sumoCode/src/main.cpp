@@ -218,6 +218,6 @@ void loop()
 {
     Serial.println("working");
     Test::trace_mode();
-    display.clearDisplay();
-    display.display();
+    // display.clearDisplay();
+    // display.display();
 }
