@@ -5,6 +5,7 @@
 #include <Vehicle_actions.hpp>
 #include <Vehicle_utils.hpp>
 #include <Functional_interface.hpp>
+#include <string.h>
 
 void setup()
 {
@@ -19,9 +20,6 @@ void setup()
     pinMode(RIGHT_WHEEL_BACKWARD, OUTPUT);
     pinMode(LEFT_MOTOR, OUTPUT);
     pinMode(RIGHT_MOTOR, OUTPUT);
-    // pinMode(QTR_SENSOR_FL, INPUT);
-    // pinMode(QTR_SENSOR_FR, INPUT);
-    // pinMode(QTR_SENSOR_B, INPUT);
 
     initScreen(SSD1306_SWITCHCAPVCC, 0x3C);
     Serial.begin(9600);
@@ -33,7 +31,7 @@ void setup()
     }
     else
     {
-        screen_count_down_3sec();
+        screen_count_down_4sec();
     }
 
     randomSeed(analogRead(0));
@@ -129,7 +127,7 @@ struct Test
     {
         auto speed = 130;
         auto range = 20.0;
-        auto tolerance = 1.2;
+        auto tolerance = 1;
         auto info = obj_detected_info(range);
         auto delay_ms = 10;
 
@@ -138,11 +136,23 @@ struct Test
             if (is_adjusting_needed(info, range, tolerance))
             {
                 car_adjust_attack_direction(info, tolerance, speed);
+                
+                screen_display_after_clear((String("L: ") + info.left_sensor.getValue()).c_str(), 0, 0);
+                screen_display_after_clear((String("R: ") + info.right_sensor.getValue()).c_str(), 0, 1);
+                screen_display_after_clear((info.left_sensor.getValue() > info.right_sensor.getValue()) ?
+                    String("<<<<<<<<<").c_str() : 
+                    String(">>>>>>>>>").c_str(), 0, 3);
             }
             else
             {
                 car_go_forward(speed);
+                screen_display_after_clear(String("Forward:").c_str(), 0, 0);
+                screen_display_after_clear(String(speed).c_str(), 0, 1);
             }
+        }
+        else
+        {
+            screen_display_after_clear("Not move", 0, 0);
         }
 
         delay(delay_ms);

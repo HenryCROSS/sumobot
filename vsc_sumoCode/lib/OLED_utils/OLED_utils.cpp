@@ -21,35 +21,42 @@ void initScreen(uint8_t switchvcc, uint8_t i2caddr,
     global_display = Maybe(display);
 }
 
-void screen_count_down_3sec()
+void screen_count_down_4sec()
 {
-    delay(2000);
-    screen_display_after_clear("3");
     delay(1000);
-    screen_display_after_clear("2");
+    screen_display_after_clear("4", 0, 0);
     delay(1000);
-    screen_display_after_clear("1");
+    screen_display_after_clear("3", 0, 0);
     delay(1000);
-    screen_display_after_clear(">=0>");
+    screen_display_after_clear("2", 0, 0);
+    delay(1000);
+    screen_display_after_clear("1", 0, 0);
+    delay(1000);
 }
 
-void screen_display_after_clear(const char *msg)
+void screen_display_after_clear(const char *msg, int16_t x, int16_t y, uint8_t size)
 {
     if (global_display.hasValue())
     {
         auto display = global_display.getValue();
         display.clearDisplay();
-        display.println(msg);
+        display.setTextSize(size);
+        display.setTextColor(WHITE);
+        display.setCursor(x, y);
+        display.print(msg);
         display.display();
     }
 }
 
-void screen_display_without_clear(const char *msg)
+void screen_display_without_clear(const char *msg, int16_t x, int16_t y, uint8_t size)
 {
     if (global_display.hasValue())
     {
         auto display = global_display.getValue();
-        display.println(msg);
+        display.setTextSize(size);
+        display.setTextColor(WHITE);
+        display.setCursor(x, y);
+        display.print(msg);
         display.display();
     }
 }
