@@ -64,6 +64,7 @@ void setup()
     display.display();
     delay(100);
     display.clearDisplay();
+    display.display();
 }
 
 struct Test
@@ -217,4 +218,6 @@ void loop()
 {
     Serial.println("working");
     Test::trace_mode();
+    display.clearDisplay();
+    display.display();
 }
