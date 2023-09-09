@@ -20,7 +20,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 void setup()
 {
     Serial.begin(9600);
-    
+
     // put your setup code here, to run once:
     pinMode(TRIGGER_PIN_L, OUTPUT);
     pinMode(ECHO_PIN_L, INPUT);
@@ -47,21 +47,21 @@ void setup()
 
     // randomSeed(analogRead(0));
 
-    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
-    { // Address 0x3D for 128x64
-        Serial.println(F("SSD1306 allocation failed"));
-        for (;;)
-            ;
-    }
+    // if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+    // { // Address 0x3D for 128x64
+    //     Serial.println(F("SSD1306 allocation failed"));
+    //     for (;;)
+    //         ;
+    // }
     delay(2000);
-    display.clearDisplay();
+    // display.clearDisplay();
 
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(0, 10);
-    // Display static text
-    display.println("Hello, world!");
-    display.display();
+    // display.setTextSize(1);
+    // display.setTextColor(WHITE);
+    // display.setCursor(0, 10);
+    // // Display static text
+    // display.println("Hello, world!");
+    // display.display();
 }
 
 struct Test
@@ -167,41 +167,41 @@ struct Test
                 // screen_display_after_clear((String("L: ") + info.left_sensor.getValue()).c_str(), 0, 0);
                 // screen_display_after_clear((String("R: ") + info.right_sensor.getValue()).c_str(), 0, 1);
                 // screen_display_after_clear((info.left_sensor.getValue() > info.right_sensor.getValue()) ? String("<<<<<<<<<").c_str() : String(">>>>>>>>>").c_str(), 0, 3);
-                display.clearDisplay();
+            //     display.clearDisplay();
 
-            display.setTextSize(1);
-            display.setTextColor(WHITE);
-            display.setCursor(0, 10);
-            // Display static text
-            display.println("Adjustment");
-            display.display();
+            // display.setTextSize(1);
+            // display.setTextColor(WHITE);
+            // display.setCursor(0, 10);
+            // // Display static text
+            // display.println("Adjustment");
+            // display.display();
             }
             else
             {
                 car_go_forward(speed);
                 // screen_display_after_clear(String("Forward:").c_str(), 0, 0);
                 // screen_display_after_clear(String(speed).c_str(), 0, 1);
-                display.clearDisplay();
+            //     display.clearDisplay();
 
-            display.setTextSize(1);
-            display.setTextColor(WHITE);
-            display.setCursor(0, 10);
-            // Display static text
-            display.println("Forward");
-            display.display();
+            // display.setTextSize(1);
+            // display.setTextColor(WHITE);
+            // display.setCursor(0, 10);
+            // // Display static text
+            // display.println("Forward");
+            // display.display();
             }
         }
         else
         {
             // screen_display_after_clear("Not move", 0, 0);
-            display.clearDisplay();
+            // display.clearDisplay();
 
-            display.setTextSize(1);
-            display.setTextColor(WHITE);
-            display.setCursor(0, 10);
-            // Display static text
-            display.println("Not Move");
-            display.display();
+            // display.setTextSize(1);
+            // display.setTextColor(WHITE);
+            // display.setCursor(0, 10);
+            // // Display static text
+            // display.println("Not Move");
+            // display.display();
         }
 
         delay(delay_ms);
