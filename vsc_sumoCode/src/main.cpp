@@ -21,10 +21,10 @@ void setup()
     pinMode(LEFT_MOTOR, OUTPUT);
     pinMode(RIGHT_MOTOR, OUTPUT);
 
-    initScreen(SSD1306_SWITCHCAPVCC, 0x3C);
+    auto flag = initScreen(SSD1306_SWITCHCAPVCC, 0x3C);
     Serial.begin(9600);
 
-    if (!global_display.hasValue())
+    if (!flag)
     { // Address 0x3D for 128x64
         Serial.println(F("SSD1306 allocation failed"));
         delay(5000);
@@ -159,7 +159,7 @@ struct Test
     }
     static void normal_mode()
     {
-        
+
     }
 };
 

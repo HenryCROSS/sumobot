@@ -22,9 +22,9 @@ enum class Display_type
     B_QTR,
 };
 
-extern Maybe<Adafruit_SSD1306> global_display;
+extern Adafruit_SSD1306 display;
 
-void initScreen(uint8_t switchvcc = SSD1306_SWITCHCAPVCC, uint8_t i2caddr = 0,
+bool initScreen(uint8_t switchvcc = SSD1306_SWITCHCAPVCC, uint8_t i2caddr = 0,
                 bool reset = true, bool periphBegin = true);
 
 void screen_count_down_4sec();

@@ -4,21 +4,14 @@
 
 #include "OLED_utils.hpp"
 
-Maybe<Adafruit_SSD1306> global_display = Maybe<Adafruit_SSD1306>::Nothing();
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-void initScreen(uint8_t switchvcc, uint8_t i2caddr,
+bool initScreen(uint8_t switchvcc, uint8_t i2caddr,
                 bool reset, bool periphBegin)
 {
-    Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
     // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-    if (!display.begin(switchvcc, i2caddr, reset, periphBegin))
-    {
-        global_display = Maybe<Adafruit_SSD1306>::Nothing();
-    }
-
-    display.clearDisplay();
-    global_display = Maybe(display);
+    return display.begin(switchvcc, i2caddr, reset, periphBegin);
 }
 
 void screen_count_down_4sec()
@@ -36,29 +29,23 @@ void screen_count_down_4sec()
 
 void screen_display_after_clear(const char *msg, int16_t x, int16_t y, uint8_t size)
 {
-    if (global_display.hasValue())
-    {
-        auto display = global_display.getValue();
-        display.clearDisplay();
-        display.setTextSize(size);
-        display.setTextColor(WHITE);
-        display.setCursor(x, y);
-        display.print(msg);
-        display.display();
-    }
+
+    display.clearDisplay();
+    display.setTextSize(size);
+    display.setTextColor(WHITE);
+    display.setCursor(x, y);
+    display.print(msg);
+    display.display();
 }
 
 void screen_display_without_clear(const char *msg, int16_t x, int16_t y, uint8_t size)
 {
-    if (global_display.hasValue())
-    {
-        auto display = global_display.getValue();
-        display.setTextSize(size);
-        display.setTextColor(WHITE);
-        display.setCursor(x, y);
-        display.print(msg);
-        display.display();
-    }
+
+    display.setTextSize(size);
+    display.setTextColor(WHITE);
+    display.setCursor(x, y);
+    display.print(msg);
+    display.display();
 }
 
 void screen_display_data(Adafruit_SSD1306 display, Display_type type, const char *data)
