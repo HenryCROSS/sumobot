@@ -71,7 +71,7 @@ struct Test
     }
     static void ultrasonic_test(bool left, bool right, int range, int speed)
     {
-        auto info = obj_detected_info(range);
+        auto info = obj_detection_info(range);
         if (left && info.left_sensor.hasValue() && right && info.right_sensor.hasValue())
         {
             car_go_backward(speed);
@@ -128,7 +128,7 @@ struct Test
         auto speed = 130;
         auto range = 20.0;
         auto tolerance = 1;
-        auto info = obj_detected_info(range);
+        auto info = obj_detection_info(range);
         auto delay_ms = 10;
 
         if (is_obj_in_distance(info, range))
@@ -156,6 +156,10 @@ struct Test
         }
 
         delay(delay_ms);
+    }
+    static void normal_mode()
+    {
+        
     }
 };
 

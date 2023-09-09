@@ -5,8 +5,7 @@
 #include <Tools.hpp>
 #include <Vehicle_types.hpp>
 
-// TODO: 函数不应该再次计算是否应该要拐弯才对，应该要计算拐多少，或许需要重新考虑
-TupleMut<OP_Vehicle, int> car_adjustment_measurement(Obj_direction info, int tolerance);
+TupleMut<OP_Vehicle, int> car_adjustment_measurement(double left_sensor, double right_sensor);
 
 void wheel_forward(uint8_t forward_pin, uint8_t backward_pin);
 
@@ -41,7 +40,7 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
 bool is_obj_in_distance(Obj_direction info, double range);
 
 // range ~= 60
-Obj_direction obj_detected_info(double range);
+Obj_direction obj_detection_info(double range);
 
 bool is_adjusting_needed(Obj_direction info, double max_range, double tolerance);
 

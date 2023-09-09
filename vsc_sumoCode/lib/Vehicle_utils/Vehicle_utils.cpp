@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <Configs.h>
+#include <Tools.hpp>
 
 #include "Vehicle_utils.hpp"
-
 
 void wheel_forward(uint8_t forward_pin, uint8_t backward_pin)
 {
@@ -86,38 +86,47 @@ void car_go_random(int speed)
     }
 }
 
-TupleMut<OP_Vehicle, int> car_adjustment_measurement(Obj_direction info, int tolerance)
+TupleMut<OP_Vehicle, int> car_adjustment_measurement(double left_sensor, double right_sensor)
 {
-    if (info.left_sensor.hasValue() && info.right_sensor.hasValue())
-    {
-        int gap = info.left_sensor.getValue() - info.right_sensor.getValue();
-        if (gap > tolerance)
-            return TupleMut<OP_Vehicle, int>(OP_Vehicle::GO_RIGHT, gap);
+    int gap = left_sensor - right_sensor;
+    if (gap > 0)
+        return TupleMut<OP_Vehicle, int>(OP_Vehicle::GO_RIGHT, gap);
 
-        gap = abs(gap);
-        if (gap > tolerance)
-            return TupleMut<OP_Vehicle, int>(OP_Vehicle::GO_LEFT, gap);
-    }
-
-    return TupleMut<OP_Vehicle, int>(OP_Vehicle::GO_FORWARD, 0);
+    gap = abs(gap);
+    return TupleMut<OP_Vehicle, int>(OP_Vehicle::GO_LEFT, gap);
 }
 
 void car_adjust_attack_direction(Obj_direction info, double tolerance, int speed)
 {
-    auto result = car_adjustment_measurement(info, tolerance);
-    double factor = (abs(result.snd) - tolerance) / result.snd;
-
-    switch (result.fst)
+    if (info.left_sensor.hasValue() && info.right_sensor.hasValue())
     {
-    case OP_Vehicle::GO_LEFT:
+        auto result = car_adjustment_measurement(info.left_sensor.getValue(), info.right_sensor.getValue());
+        // double factor = (abs(result.snd) - tolerance) / result.snd;
+
+        double factor = curve_algorithm(result.snd);
+
+        switch (result.fst)
+        {
+        case OP_Vehicle::GO_LEFT:
+            car_turn_left(speed * factor);
+            break;
+        case OP_Vehicle::GO_RIGHT:
+            car_turn_right(speed * factor);
+            break;
+        default:
+            break;
+            ;
+        }
+    }
+    else if (info.left_sensor.hasValue())
+    {
+        double factor = curve_algorithm(1);
         car_turn_left(speed * factor);
-        break;
-    case OP_Vehicle::GO_RIGHT:
+    }
+    else if (info.right_sensor.hasValue())
+    {
+        double factor = curve_algorithm(1);
         car_turn_right(speed * factor);
-        break;
-    default:
-        break;
-        ;
     }
 }
 
@@ -141,11 +150,7 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
 {
     int frontL = analogRead(qtr_sensor_front_left);
     int frontR = analogRead(qtr_sensor_front_right);
-    // int back = analogRead(qtr_sensor_back);
-    // int frontR = 0;
-    int back = 0;
-    Serial.print("FrontL: ");
-    // Serial.println(frontL);
+    int back = analogRead(qtr_sensor_back);
 
     Serial.print(frontL);
     Serial.print(":L /");
@@ -160,25 +165,19 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
     }
     else if (frontL <= 400)
     {
-        // Serial.print(frontR);
-        // Serial.println("FrontLeft");
+
         return Maybe(Edge_Signal::FRONT_LEFT);
     }
     else if (frontR <= 400)
     {
-        // Serial.print(frontR);
-        // Serial.println("FrontRight");
         return Maybe(Edge_Signal::FRONT_RIGHT);
     }
     else if (back <= 400)
     {
-        // Serial.print(back);
-        // Serial.println("Back");
         return Maybe(Edge_Signal::BACK);
     }
     else
     {
-        // Serial.println("None");
         return Maybe<Edge_Signal>::Nothing();
     }
 }
@@ -189,7 +188,7 @@ bool is_obj_in_distance(Obj_direction info, double range)
 }
 
 // range ~= 60
-Obj_direction obj_detected_info(double range)
+Obj_direction obj_detection_info(double range)
 {
     double distance_l = detect_obj_distance(TRIGGER_PIN_L, ECHO_PIN_L);
     double distance_r = detect_obj_distance(TRIGGER_PIN_R, ECHO_PIN_R);

@@ -15,6 +15,8 @@
 #define QTR_SENSOR_FR A0         // qtr sensor
 #define QTR_SENSOR_B A1          // qtr sensor
 
-#define MAX_DISTANCE 200
+#define MAX_DISTANCE 200        // Max detect distance
+#define TIMESLICE 10            // time for each action lasts
+#define E 2.71828               // value of e
 
 #endif // !_PIN_H_

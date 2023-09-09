@@ -1,32 +1,71 @@
-#include <Functional_interface.hpp>
+#include <Arduino.h>
+#include <Configs.h>
+#include <Vehicle_utils.hpp>
 
 #include "Vehicle_actions.hpp"
 
-void search_strategy(Maybe<Edge_Signal> edge)
+static bool rotation(int distance, int speed, unsigned long ms);
+
+bool search_strategy(Strategy strategy, int distance, int speed, unsigned long ms)
 {
-    if (edge.hasValue())
+    switch (strategy)
     {
-        switch (edge.getValue())
+    case Strategy::ROTATION:
+        return rotation(distance, speed, ms);
+        break;
+
+    default:
+        break;
+    }
+
+    return false;
+}
+
+static bool rotation(int distance, int speed, unsigned long ms)
+{
+    static uint16_t last = 0;
+
+    bool found = false;
+
+    Maybe<Edge_Signal> signal = Maybe<Edge_Signal>::Nothing();
+
+    while (last < ms && !found)
+    {
+        if (signal.hasValue())
         {
-        case Edge_Signal::FRONT:
-        case Edge_Signal::FRONT_LEFT:
-            // Serial.print("turn right ");
-            car_turn_right_by_speed(80, 80);
-            break;
-
-        case Edge_Signal::BACK:
-            car_go_random(80);
-            break;
-
-        case Edge_Signal::FRONT_RIGHT:
-            car_turn_left_by_speed(80, 80);
-        default:
-            // Never exec
-            break;
+            switch (signal.getValue())
+            {
+            case Edge_Signal::FRONT:
+                car_turn_left_by_speed(speed, speed);
+                break;
+            case Edge_Signal::FRONT_LEFT:
+                car_turn_right_by_speed(speed, speed);
+                break;
+            case Edge_Signal::FRONT_RIGHT:
+                car_turn_left_by_speed(speed, speed);
+                break;
+            case Edge_Signal::BACK:
+                car_go_forward(speed);
+                break;
+            default:
+                break;
+            }
         }
+        else
+        {
+            car_turn_left_by_speed(speed, speed);
+        }
+
+        last += TIMESLICE;
+        delay(TIMESLICE);
+
+        signal = determine_edge(QTR_SENSOR_FL, QTR_SENSOR_FR, QTR_SENSOR_B);
+
+        auto info = obj_detection_info(distance);
+        found = is_obj_in_distance(info, distance);
     }
-    else
-    {
-        car_turn_left_by_speed(80, 80);
-    }
+
+    last = 0;
+
+    return found;
 }
