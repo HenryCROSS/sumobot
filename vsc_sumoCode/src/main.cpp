@@ -19,6 +19,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 void setup()
 {
+    Serial.begin(9600);
+    
     // put your setup code here, to run once:
     pinMode(TRIGGER_PIN_L, OUTPUT);
     pinMode(ECHO_PIN_L, INPUT);
@@ -32,7 +34,6 @@ void setup()
     pinMode(RIGHT_MOTOR, OUTPUT);
 
     // auto flag = initScreen(SSD1306_SWITCHCAPVCC, 0x3C);
-    // Serial.begin(9600);
 
     // if (!flag)
     // { // Address 0x3D for 128x64
