@@ -184,6 +184,7 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
 
 bool is_obj_in_distance(Obj_direction info, double range)
 {
+    
     Serial.println((info.left_sensor.hasValue() && info.left_sensor.getValue() <= range) || (info.right_sensor.hasValue() && info.right_sensor.getValue() <= range));
     return (info.left_sensor.hasValue() && info.left_sensor.getValue() <= range) || (info.right_sensor.hasValue() && info.right_sensor.getValue() <= range);
 }
@@ -211,6 +212,10 @@ bool is_adjusting_needed(Obj_direction info, double max_range, double tolerance)
         {
             return true;
         }
+    }
+    else if (info.left_sensor.hasValue() || info.right_sensor.hasValue())
+    {
+        return true;
     }
     return false;
 }

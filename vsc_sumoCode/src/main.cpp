@@ -1,11 +1,21 @@
 #include <Arduino.h>
 #include <Configs.h>
-#include <OLED_utils.hpp>
+// #include <OLED_utils.hpp>
 #include <Tools.hpp>
 #include <Vehicle_actions.hpp>
 #include <Vehicle_utils.hpp>
 #include <Functional_interface.hpp>
 #include <string.h>
+
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 void setup()
 {
@@ -21,20 +31,36 @@ void setup()
     pinMode(LEFT_MOTOR, OUTPUT);
     pinMode(RIGHT_MOTOR, OUTPUT);
 
-    auto flag = initScreen(SSD1306_SWITCHCAPVCC, 0x3C);
-    Serial.begin(9600);
+    // auto flag = initScreen(SSD1306_SWITCHCAPVCC, 0x3C);
+    // Serial.begin(9600);
 
-    if (!flag)
+    // if (!flag)
+    // { // Address 0x3D for 128x64
+    //     Serial.println(F("SSD1306 allocation failed"));
+    //     delay(5000);
+    // }
+    // else
+    // {
+    //     screen_count_down_4sec();
+    // }
+
+    // randomSeed(analogRead(0));
+
+    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
     { // Address 0x3D for 128x64
         Serial.println(F("SSD1306 allocation failed"));
-        delay(5000);
+        for (;;)
+            ;
     }
-    else
-    {
-        screen_count_down_4sec();
-    }
+    delay(2000);
+    display.clearDisplay();
 
-    randomSeed(analogRead(0));
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 10);
+    // Display static text
+    display.println("Hello, world!");
+    display.display();
 }
 
 struct Test
@@ -136,30 +162,51 @@ struct Test
             if (is_adjusting_needed(info, range, tolerance))
             {
                 car_adjust_attack_direction(info, tolerance, speed);
-                
-                screen_display_after_clear((String("L: ") + info.left_sensor.getValue()).c_str(), 0, 0);
-                screen_display_after_clear((String("R: ") + info.right_sensor.getValue()).c_str(), 0, 1);
-                screen_display_after_clear((info.left_sensor.getValue() > info.right_sensor.getValue()) ?
-                    String("<<<<<<<<<").c_str() : 
-                    String(">>>>>>>>>").c_str(), 0, 3);
+
+                // screen_display_after_clear((String("L: ") + info.left_sensor.getValue()).c_str(), 0, 0);
+                // screen_display_after_clear((String("R: ") + info.right_sensor.getValue()).c_str(), 0, 1);
+                // screen_display_after_clear((info.left_sensor.getValue() > info.right_sensor.getValue()) ? String("<<<<<<<<<").c_str() : String(">>>>>>>>>").c_str(), 0, 3);
+                display.clearDisplay();
+
+            display.setTextSize(1);
+            display.setTextColor(WHITE);
+            display.setCursor(0, 10);
+            // Display static text
+            display.println("Adjustment");
+            display.display();
             }
             else
             {
                 car_go_forward(speed);
-                screen_display_after_clear(String("Forward:").c_str(), 0, 0);
-                screen_display_after_clear(String(speed).c_str(), 0, 1);
+                // screen_display_after_clear(String("Forward:").c_str(), 0, 0);
+                // screen_display_after_clear(String(speed).c_str(), 0, 1);
+                display.clearDisplay();
+
+            display.setTextSize(1);
+            display.setTextColor(WHITE);
+            display.setCursor(0, 10);
+            // Display static text
+            display.println("Forward");
+            display.display();
             }
         }
         else
         {
-            screen_display_after_clear("Not move", 0, 0);
+            // screen_display_after_clear("Not move", 0, 0);
+            display.clearDisplay();
+
+            display.setTextSize(1);
+            display.setTextColor(WHITE);
+            display.setCursor(0, 10);
+            // Display static text
+            display.println("Not Move");
+            display.display();
         }
 
         delay(delay_ms);
     }
     static void normal_mode()
     {
-
     }
 };
 
