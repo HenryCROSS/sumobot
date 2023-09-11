@@ -170,41 +170,41 @@ struct Test
                 // screen_display_after_clear((String("L: ") + info.left_sensor.getValue()).c_str(), 0, 0);
                 // screen_display_after_clear((String("R: ") + info.right_sensor.getValue()).c_str(), 0, 1);
                 // screen_display_after_clear((info.left_sensor.getValue() > info.right_sensor.getValue()) ? String("<<<<<<<<<").c_str() : String(">>>>>>>>>").c_str(), 0, 3);
-                display.clearDisplay();
+                // display.clearDisplay();
 
-                display.setTextSize(1);
-                display.setTextColor(WHITE);
-                display.setCursor(0, 10);
-                // Display static text
-                display.println("Adjustment");
-                display.display();
+                // display.setTextSize(1);
+                // display.setTextColor(WHITE);
+                // display.setCursor(0, 10);
+                // // Display static text
+                // display.println("Adjustment");
+                // display.display();
             }
             else
             {
                 car_go_forward(speed);
                 // screen_display_after_clear(String("Forward:").c_str(), 0, 0);
                 // screen_display_after_clear(String(speed).c_str(), 0, 1);
-                display.clearDisplay();
+                // display.clearDisplay();
 
-                display.setTextSize(1);
-                display.setTextColor(WHITE);
-                display.setCursor(0, 10);
-                // Display static text
-                display.println("Forward");
-                display.display();
+                // display.setTextSize(1);
+                // display.setTextColor(WHITE);
+                // display.setCursor(0, 10);
+                // // Display static text
+                // display.println("Forward");
+                // display.display();
             }
         }
         else
         {
             // screen_display_after_clear("Not move", 0, 0);
-            display.clearDisplay();
+            // display.clearDisplay();
 
-            display.setTextSize(1);
-            display.setTextColor(WHITE);
-            display.setCursor(0, 10);
-            // Display static text
-            display.println("Not Move");
-            display.display();
+            // display.setTextSize(1);
+            // display.setTextColor(WHITE);
+            // display.setCursor(0, 10);
+            // // Display static text
+            // display.println("Not Move");
+            // display.display();
         }
 
         delay(delay_ms);
@@ -219,6 +219,6 @@ void loop()
 {
     Serial.println("working");
     Test::trace_mode();
-    display.clearDisplay();
-    display.display();
+    // display.clearDisplay();
+    // display.display();
 }
