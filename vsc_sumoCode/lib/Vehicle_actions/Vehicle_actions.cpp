@@ -61,7 +61,7 @@ static bool rotation(int distance, int speed, unsigned long ms)
 
         signal = determine_edge(QTR_SENSOR_FL, QTR_SENSOR_FR, QTR_SENSOR_B);
 
-        auto info = obj_detection_info(distance);
+        auto info = obj_detection_info();
         found = is_obj_in_distance(info, distance);
     }
 

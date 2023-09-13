@@ -108,9 +108,13 @@ void car_adjust_attack_direction(Obj_direction info, double tolerance, int speed
         switch (result.fst)
         {
         case OP_Vehicle::GO_LEFT:
+            Serial.print("GO LEFT: ");
+            Serial.println(speed * factor);
             car_turn_left(speed * factor);
             break;
         case OP_Vehicle::GO_RIGHT:
+            Serial.print("GO RIGHT: ");
+            Serial.println(speed * factor);
             car_turn_right(speed * factor);
             break;
         default:
@@ -122,11 +126,17 @@ void car_adjust_attack_direction(Obj_direction info, double tolerance, int speed
     {
         double factor = curve_algorithm(1);
         car_turn_left(speed * factor);
+        Serial.print("GO LEFT: ");
+        Serial.println(speed * factor);
+        Serial.println(info.left_sensor.getValue());
+        Serial.println(info.right_sensor.getValue());
     }
     else if (info.right_sensor.hasValue())
     {
         double factor = curve_algorithm(1);
         car_turn_right(speed * factor);
+        Serial.print("GO RIGHT: ");
+        Serial.println(speed * factor);
     }
 }
 
@@ -136,17 +146,20 @@ void car_stop(void)
     wheel_stop(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
 
-double detect_obj_distance(uint8_t trigger_pin, uint8_t echo_pin)
+Maybe<double> detect_obj_distance(uint8_t trigger_pin, uint8_t echo_pin)
 {
     digitalWrite(trigger_pin, LOW);
     delayMicroseconds(2);
     digitalWrite(trigger_pin, HIGH);
     delayMicroseconds(10);
     digitalWrite(trigger_pin, LOW);
-    return pulseIn(echo_pin, HIGH, MAX_DISTANCE * 58) / 58.0;
+
+    auto val = pulseIn(echo_pin, HIGH, MAX_DISTANCE * 58) / 58.0;
+    return val != 0? Maybe(val): Maybe<double>::Nothing();
 }
 
-Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sensor_front_right, uint8_t qtr_sensor_back)
+Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sensor_front_right,
+                                  uint8_t qtr_sensor_back)
 {
     int frontL = analogRead(qtr_sensor_front_left);
     int frontR = analogRead(qtr_sensor_front_right);
@@ -184,21 +197,29 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
 
 bool is_obj_in_distance(Obj_direction info, double range)
 {
-    Serial.println((info.left_sensor.hasValue() && info.left_sensor.getValue() <= range) || (info.right_sensor.hasValue() && info.right_sensor.getValue() <= range));
-    return (info.left_sensor.hasValue() && info.left_sensor.getValue() <= range) || (info.right_sensor.hasValue() && info.right_sensor.getValue() <= range);
+    Serial.print("left sensor has?: ");
+    Serial.println(info.left_sensor.hasValue());
+    Serial.println(info.left_sensor.getValue());
+    Serial.print("right sensor has?: ");
+    Serial.println(info.right_sensor.hasValue());
+    Serial.println(info.right_sensor.getValue());
+    Serial.println((info.left_sensor.hasValue() && info.left_sensor.getValue() <= range) ||
+                   (info.right_sensor.hasValue() && info.right_sensor.getValue() <= range));
+    return (info.left_sensor.hasValue() && info.left_sensor.getValue() <= range) ||
+           (info.right_sensor.hasValue() && info.right_sensor.getValue() <= range);
 }
 
 // range ~= 60
-Obj_direction obj_detection_info(double range)
+Obj_direction obj_detection_info()
 {
-    double distance_l = detect_obj_distance(TRIGGER_PIN_L, ECHO_PIN_L);
-    double distance_r = detect_obj_distance(TRIGGER_PIN_R, ECHO_PIN_R);
-    Serial.println(String("L: ") + distance_l);
-    Serial.println(String("R: ") + distance_r);
+    auto distance_l = detect_obj_distance(TRIGGER_PIN_L, ECHO_PIN_L);
+    auto distance_r = detect_obj_distance(TRIGGER_PIN_R, ECHO_PIN_R);
+    Serial.println(String("L: ") + distance_l.getValue());
+    Serial.println(String("R: ") + distance_r.getValue());
 
     return (Obj_direction){
-        .left_sensor = distance_l < range ? Maybe<double>(distance_l) : Maybe<double>::Nothing(),
-        .right_sensor = distance_r < range ? Maybe<double>(distance_r) : Maybe<double>::Nothing(),
+        .left_sensor = distance_l,
+        .right_sensor = distance_r,
     };
 }
 

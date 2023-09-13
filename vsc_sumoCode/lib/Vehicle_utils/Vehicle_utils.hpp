@@ -33,14 +33,14 @@ void car_adjust_attack_direction(Obj_direction info, double tolerance, int speed
 
 void car_stop(void);
 
-double detect_obj_distance(uint8_t trigger_pin, uint8_t echo_pin);
+Maybe<double> detect_obj_distance(uint8_t trigger_pin, uint8_t echo_pin);
 
 Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sensor_front_right, uint8_t qtr_sensor_back);
 
 bool is_obj_in_distance(Obj_direction info, double range);
 
 // range ~= 60
-Obj_direction obj_detection_info(double range);
+Obj_direction obj_detection_info();
 
 bool is_adjusting_needed(Obj_direction info, double max_range, double tolerance);
 

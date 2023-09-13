@@ -1,15 +1,15 @@
 #include <Arduino.h>
 #include <Configs.h>
 // #include <OLED_utils.hpp>
+#include <Functional_interface.hpp>
 #include <Tools.hpp>
 #include <Vehicle_actions.hpp>
 #include <Vehicle_utils.hpp>
-#include <Functional_interface.hpp>
 #include <string.h>
 
-#include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <Wire.h>
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -47,21 +47,21 @@ void setup()
 
     // randomSeed(analogRead(0));
 
-    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
-    { // Address 0x3D for 128x64
-        Serial.println(F("SSD1306 allocation failed"));
-        for (;;)
-            ;
-    }
-    delay(2000);
-    display.clearDisplay();
+    // if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+    // { // Address 0x3D for 128x64
+    //     Serial.println(F("SSD1306 allocation failed"));
+    //     for (;;)
+    //         ;
+    // }
+    // delay(2000);
+    // display.clearDisplay();
 
-    display.setTextSize(2);
-    display.setTextColor(WHITE);
-    display.setCursor(0, 10);
-    // Display static text
-    display.println("Hello, world!");
-    display.display();
+    // display.setTextSize(2);
+    // display.setTextColor(WHITE);
+    // display.setCursor(0, 10);
+    // // Display static text
+    // display.println("Hello, world!");
+    // display.display();
     delay(100);
     // display.clearDisplay();
     // display.display();
@@ -101,7 +101,7 @@ struct Test
     }
     static void ultrasonic_test(bool left, bool right, int range, int speed)
     {
-        auto info = obj_detection_info(range);
+        auto info = obj_detection_info();
         if (left && info.left_sensor.hasValue() && right && info.right_sensor.hasValue())
         {
             car_go_backward(speed);
@@ -156,10 +156,13 @@ struct Test
     static void trace_mode()
     {
         auto speed = 130;
-        auto range = 20.0;
+        auto range = 30.0;
         auto tolerance = 1;
-        auto info = obj_detection_info(range);
+        auto info = obj_detection_info();
         auto delay_ms = 10;
+
+        Serial.println(String(">>L: ") + info.left_sensor.getValue());
+        Serial.println(String(">>R: ") + info.right_sensor.getValue());
 
         if (is_obj_in_distance(info, range))
         {
@@ -169,8 +172,8 @@ struct Test
 
                 // screen_display_after_clear((String("L: ") + info.left_sensor.getValue()).c_str(), 0, 0);
                 // screen_display_after_clear((String("R: ") + info.right_sensor.getValue()).c_str(), 0, 1);
-                // screen_display_after_clear((info.left_sensor.getValue() > info.right_sensor.getValue()) ? String("<<<<<<<<<").c_str() : String(">>>>>>>>>").c_str(), 0, 3);
-                // display.clearDisplay();
+                // screen_display_after_clear((info.left_sensor.getValue() > info.right_sensor.getValue()) ?
+                // String("<<<<<<<<<").c_str() : String(">>>>>>>>>").c_str(), 0, 3); display.clearDisplay();
 
                 // display.setTextSize(1);
                 // display.setTextColor(WHITE);
@@ -205,6 +208,8 @@ struct Test
             // // Display static text
             // display.println("Not Move");
             // display.display();
+
+            Serial.println("NOT MOVE");
         }
 
         delay(delay_ms);
@@ -217,8 +222,13 @@ struct Test
 
 void loop()
 {
-    Serial.println("working");
+    // Serial.println();
+    // Serial.println();
+    // Serial.println();
+    // Serial.println();
+    Serial.println("===============");
     Test::trace_mode();
     // display.clearDisplay();
     // display.display();
+    delay(500);
 }
