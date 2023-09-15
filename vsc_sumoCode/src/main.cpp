@@ -15,12 +15,13 @@
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, 1);
 
 void setup()
 {
     Serial.begin(9600);
-
+    Serial.println(SDA);
+    Serial.println(SCL);
     // put your setup code here, to run once:
     pinMode(TRIGGER_PIN_L, OUTPUT);
     pinMode(ECHO_PIN_L, INPUT);
@@ -47,22 +48,22 @@ void setup()
 
     // randomSeed(analogRead(0));
 
-    // if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
-    // { // Address 0x3D for 128x64
-    //     Serial.println(F("SSD1306 allocation failed"));
-    //     for (;;)
-    //         ;
-    // }
-    // delay(2000);
-    // display.clearDisplay();
+    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+    { // Address 0x3D for 128x64
+        Serial.println(F("SSD1306 allocation failed"));
+        for (;;)
+            ;
+    }
+    delay(1000);
+    display.clearDisplay();
 
-    // display.setTextSize(2);
-    // display.setTextColor(WHITE);
-    // display.setCursor(0, 10);
-    // // Display static text
-    // display.println("Hello, world!");
-    // display.display();
-    delay(100);
+    display.setTextSize(2);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 10);
+    // Display static text
+    display.println("Hello, world!");
+    display.display();
+    delay(1000);
     // display.clearDisplay();
     // display.display();
 }
@@ -175,39 +176,40 @@ struct Test
                 // screen_display_after_clear((info.left_sensor.getValue() > info.right_sensor.getValue()) ?
                 // String("<<<<<<<<<").c_str() : String(">>>>>>>>>").c_str(), 0, 3); display.clearDisplay();
 
-                // display.setTextSize(1);
-                // display.setTextColor(WHITE);
-                // display.setCursor(0, 10);
-                // // Display static text
-                // display.println("Adjustment");
-                // display.display();
+                display.clearDisplay();
+                display.setTextSize(1);
+                display.setTextColor(WHITE);
+                display.setCursor(0, 10);
+                // Display static text
+                display.println("Adjustment");
+                display.display();
             }
             else
             {
                 car_go_forward(speed);
                 // screen_display_after_clear(String("Forward:").c_str(), 0, 0);
                 // screen_display_after_clear(String(speed).c_str(), 0, 1);
-                // display.clearDisplay();
-
-                // display.setTextSize(1);
-                // display.setTextColor(WHITE);
-                // display.setCursor(0, 10);
-                // // Display static text
-                // display.println("Forward");
-                // display.display();
+                
+                display.clearDisplay();
+                display.setTextSize(1);
+                display.setTextColor(WHITE);
+                display.setCursor(0, 10);
+                // Display static text
+                display.println("Forward");
+                display.display();
             }
         }
         else
         {
             // screen_display_after_clear("Not move", 0, 0);
-            // display.clearDisplay();
 
-            // display.setTextSize(1);
-            // display.setTextColor(WHITE);
-            // display.setCursor(0, 10);
-            // // Display static text
-            // display.println("Not Move");
-            // display.display();
+            display.clearDisplay();
+            display.setTextSize(1);
+            display.setTextColor(WHITE);
+            display.setCursor(0, 10);
+            // Display static text
+            display.println("Not Move");
+            display.display();
 
             Serial.println("NOT MOVE");
         }
