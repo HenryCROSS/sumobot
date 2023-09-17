@@ -15,7 +15,7 @@
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-// Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, 1);
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, 1);
 
 void setup()
 {
@@ -32,11 +32,36 @@ void setup()
     pinMode(LEFT_MOTOR, OUTPUT);
     pinMode(RIGHT_MOTOR, OUTPUT);
 
+    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+    { // Address 0x3D for 128x64
+        Serial.println(F("SSD1306 allocation failed"));
+        for (;;)
+            ;
+    }
+    delay(2000);
+
+    display.clearDisplay();
+    display.setTextSize(2);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 10);
+    // Display static text
+    display.println("Hello, world!");
+    display.display();
     delay(1000);
 }
 
 struct Test
 {
+    static void oled_display(const char *msg)
+    {
+        display.clearDisplay();
+        display.setTextSize(2);
+        display.setTextColor(WHITE);
+        display.setCursor(0, 10);
+        // Display static text
+        display.println(msg);
+        display.display();
+    }
     static void motor_forward(bool left_wheel, bool right_wheel, int speed)
     {
         if (left_wheel && right_wheel)
@@ -137,14 +162,17 @@ struct Test
             if (is_adjusting_needed(info, range, tolerance))
             {
                 car_adjust_attack_direction(info, tolerance, speed);
+                Test::oled_display("TURNING");
             }
             else
             {
                 car_go_forward(speed);
+                Test::oled_display("FORWARD");
             }
         }
         else
         {
+            Test::oled_display("NOT MOVE");
             Serial.println("NOT MOVE");
         }
 
