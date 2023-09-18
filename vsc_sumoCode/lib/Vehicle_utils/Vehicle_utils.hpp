@@ -2,7 +2,6 @@
 #define _VEHICLE_UTILS_HPP_
 
 #include <Arduino.h>
-#include <Tools.hpp>
 #include <Vehicle_types.hpp>
 
 TupleMut<OP_Vehicle, int> car_adjustment_measurement(double left_sensor, double right_sensor);

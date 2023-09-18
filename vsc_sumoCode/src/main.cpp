@@ -1,11 +1,7 @@
 #include <Arduino.h>
 // #include <OLED_utils.hpp>
 #include <Configs.h>
-#include <Functional_interface.hpp>
-#include <Tools.hpp>
-#include <Vehicle_actions.hpp>
 #include <Vehicle_utils.hpp>
-#include <string.h>
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>

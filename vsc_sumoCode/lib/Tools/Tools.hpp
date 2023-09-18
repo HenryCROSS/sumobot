@@ -2,6 +2,7 @@
 #define _TYPES_HPP_
 
 #include <Arduino.h>
+#include <Configs.h>
 
 template <typename T, class Tag>
 class NewType
@@ -200,6 +201,8 @@ using PinId = NewType<uint8_t, PinIdTag>;
 using ErrId = NewType<int, ErrIdTag>;
 
 // f(0) = 0.5; f(1) = 0.7311; lim_x->inf f(x) = 1
-double curve_algorithm(double x);
+constexpr double curve_algorithm(double x){
+    return 1.0 / (1.0 + pow(E, -x));
+}
 
 #endif // !_TYPES_HPP_
