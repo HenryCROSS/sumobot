@@ -19,4 +19,6 @@
 #define TIMESLICE 10            // time for each action lasts
 #define E 2.71828               // value of e
 
+#define MAX_TASKS 10
+
 #endif // !_PIN_H_

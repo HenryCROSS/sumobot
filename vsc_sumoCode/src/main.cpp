@@ -180,46 +180,7 @@ struct Test
     }
 };
 
-class Production
-{
-    enum class Stage
-    {
-        INIT,
-        BATTLE,
-        BACKWARD,
-    } static stage;
 
-    static Stage go_backward_mode()
-    {
-
-    }
-
-    static Stage battle_mode()
-    {
-    }
-
-public:
-    static void run()
-    {
-        switch (stage)
-        {
-        case Stage::INIT:
-            stage = Stage::BACKWARD;
-            break;
-
-        case Stage::BATTLE:
-            stage = battle_mode();
-            break;
-
-        case Stage::BACKWARD:
-            stage = go_backward_mode();
-            break;
-            
-        default:
-            break;
-        }
-    }
-};
 
 void loop()
 {

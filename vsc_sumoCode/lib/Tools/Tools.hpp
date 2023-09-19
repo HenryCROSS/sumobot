@@ -67,6 +67,56 @@ public:
     }
 };
 
+template <typename T, int SIZE>
+class Array
+{
+public:
+    T &operator[](int index)
+    {
+        return data[index];
+    }
+
+    const T &operator[](int index) const
+    {
+        return data[index];
+    }
+
+    int capacity() const
+    {
+        return SIZE;
+    }
+
+    int size() const
+    {
+        return len;
+    }
+
+    bool push_back(const T &value)
+    {
+        if (len >= SIZE)
+        {
+            return false;
+        }
+        data[len] = value;
+        ++len;
+        return true;
+    }
+
+    bool pop_back()
+    {
+        if (len <= 0)
+        {
+            return false;
+        }
+        --len;
+        return true;
+    }
+
+private:
+    T data[SIZE];
+    int len;
+};
+
 template <typename T>
 class Maybe
 {
@@ -173,7 +223,6 @@ private:
     }
 };
 
-
 /*
   Example:
   actions_duration(1000, [](){
@@ -201,7 +250,8 @@ using PinId = NewType<uint8_t, PinIdTag>;
 using ErrId = NewType<int, ErrIdTag>;
 
 // f(0) = 0.5; f(1) = 0.7311; lim_x->inf f(x) = 1
-constexpr double curve_algorithm(double x){
+constexpr double curve_algorithm(double x)
+{
     return 1.0 / (1.0 + pow(E, -x));
 }
 
