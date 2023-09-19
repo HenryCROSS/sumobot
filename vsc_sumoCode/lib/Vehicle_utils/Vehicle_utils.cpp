@@ -4,30 +4,30 @@
 
 #include "Vehicle_utils.hpp"
 
-inline void wheel_forward(uint8_t forward_pin, uint8_t backward_pin)
+void wheel_forward(uint8_t forward_pin, uint8_t backward_pin)
 {
     digitalWrite(forward_pin, HIGH);
     digitalWrite(backward_pin, LOW);
 }
 
-inline void wheel_backward(uint8_t forward_pin, uint8_t backward_pin)
+void wheel_backward(uint8_t forward_pin, uint8_t backward_pin)
 {
     digitalWrite(forward_pin, LOW);
     digitalWrite(backward_pin, HIGH);
 }
 
-inline void wheel_stop(uint8_t forward_pin, uint8_t backward_pin)
+void wheel_stop(uint8_t forward_pin, uint8_t backward_pin)
 {
     digitalWrite(forward_pin, LOW);
     digitalWrite(backward_pin, LOW);
 }
 
-inline void wheel_move_speed(uint8_t pin, int speed)
+void wheel_move_speed(uint8_t pin, int speed)
 {
     analogWrite(pin, speed);
 }
 
-inline void car_go_forward(int speed)
+void car_go_forward(int speed)
 {
     wheel_move_speed(LEFT_MOTOR, speed);
     wheel_move_speed(RIGHT_MOTOR, speed);
@@ -35,7 +35,7 @@ inline void car_go_forward(int speed)
     wheel_forward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
 
-inline void car_go_backward(int speed)
+void car_go_backward(int speed)
 {
     wheel_move_speed(LEFT_MOTOR, speed);
     wheel_move_speed(RIGHT_MOTOR, speed);
@@ -43,7 +43,7 @@ inline void car_go_backward(int speed)
     wheel_backward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
 
-inline void car_turn_right_by_speed(int left_wheel_forward_speed, int right_wheel_backward_speed)
+void car_turn_right_by_speed(int left_wheel_forward_speed, int right_wheel_backward_speed)
 {
     wheel_move_speed(LEFT_MOTOR, left_wheel_forward_speed);
     wheel_move_speed(RIGHT_MOTOR, right_wheel_backward_speed);
@@ -51,7 +51,7 @@ inline void car_turn_right_by_speed(int left_wheel_forward_speed, int right_whee
     wheel_backward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
 
-inline void car_turn_left_by_speed(int left_wheel_backward_speed, int right_wheel_forward_speed)
+void car_turn_left_by_speed(int left_wheel_backward_speed, int right_wheel_forward_speed)
 {
     wheel_move_speed(LEFT_MOTOR, left_wheel_backward_speed);
     wheel_move_speed(RIGHT_MOTOR, right_wheel_forward_speed);
@@ -59,12 +59,12 @@ inline void car_turn_left_by_speed(int left_wheel_backward_speed, int right_whee
     wheel_backward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
 }
 
-inline void car_turn_left(int speed)
+void car_turn_left(int speed)
 {
     car_turn_left_by_speed(speed, 0);
 }
 
-inline void car_turn_right(int speed)
+void car_turn_right(int speed)
 {
     car_turn_right_by_speed(0, speed);
 }
@@ -96,7 +96,7 @@ TupleMut<OP_Vehicle, int> car_adjustment_measurement(double left_sensor, double 
     return TupleMut<OP_Vehicle, int>(OP_Vehicle::GO_LEFT, gap);
 }
 
-void car_adjust_attack_direction(Obj_direction info, double tolerance, int speed)
+void car_adjust_attack_direction(Obj_direction info, int speed)
 {
     if (info.left_sensor.hasValue() && info.right_sensor.hasValue())
     {
@@ -108,13 +108,9 @@ void car_adjust_attack_direction(Obj_direction info, double tolerance, int speed
         switch (result.fst)
         {
         case OP_Vehicle::GO_LEFT:
-            Serial.print("GO LEFT: ");
-            Serial.println(speed * factor);
             car_turn_left(speed * factor);
             break;
         case OP_Vehicle::GO_RIGHT:
-            Serial.print("GO RIGHT: ");
-            Serial.println(speed * factor);
             car_turn_right(speed * factor);
             break;
         default:
@@ -126,21 +122,15 @@ void car_adjust_attack_direction(Obj_direction info, double tolerance, int speed
     {
         double factor = curve_algorithm(1);
         car_turn_left(speed * factor);
-        Serial.print("GO LEFT: ");
-        Serial.println(speed * factor);
-        Serial.println(info.left_sensor.getValue());
-        Serial.println(info.right_sensor.getValue());
     }
     else if (info.right_sensor.hasValue())
     {
         double factor = curve_algorithm(1);
         car_turn_right(speed * factor);
-        Serial.print("GO RIGHT: ");
-        Serial.println(speed * factor);
     }
 }
 
-inline void car_stop(void)
+void car_stop(void)
 {
     wheel_stop(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
     wheel_stop(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
@@ -165,13 +155,6 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
     int frontR = analogRead(qtr_sensor_front_right);
     int back = analogRead(qtr_sensor_back);
 
-    Serial.print(frontL);
-    Serial.print(":L /");
-    Serial.print(frontR);
-    Serial.print(":R /");
-    Serial.print(back);
-    Serial.print(":B /");
-    Serial.println("Front");
     if (frontL <= 400 && frontR <= 400)
     {
         return Maybe(Edge_Signal::FRONT);
@@ -197,14 +180,6 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
 
 bool is_obj_in_distance(Obj_direction info, double range)
 {
-    Serial.print("left sensor has?: ");
-    Serial.println(info.left_sensor.hasValue());
-    Serial.println(info.left_sensor.getValue());
-    Serial.print("right sensor has?: ");
-    Serial.println(info.right_sensor.hasValue());
-    Serial.println(info.right_sensor.getValue());
-    Serial.println((info.left_sensor.hasValue() && info.left_sensor.getValue() <= range) ||
-                   (info.right_sensor.hasValue() && info.right_sensor.getValue() <= range));
     return (info.left_sensor.hasValue() && info.left_sensor.getValue() <= range) ||
            (info.right_sensor.hasValue() && info.right_sensor.getValue() <= range);
 }
@@ -214,8 +189,6 @@ Obj_direction obj_detection_info()
 {
     auto distance_l = detect_obj_distance(TRIGGER_PIN_L, ECHO_PIN_L);
     auto distance_r = detect_obj_distance(TRIGGER_PIN_R, ECHO_PIN_R);
-    Serial.println(String("L: ") + distance_l.getValue());
-    Serial.println(String("R: ") + distance_r.getValue());
 
     return (Obj_direction){
         .left_sensor = distance_l,
@@ -223,7 +196,7 @@ Obj_direction obj_detection_info()
     };
 }
 
-bool is_adjusting_needed(Obj_direction info, double max_range, double tolerance)
+bool is_adjusting_needed(Obj_direction info, double tolerance)
 {
     if (info.left_sensor.hasValue() && info.right_sensor.hasValue())
     {

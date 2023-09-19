@@ -24,10 +24,10 @@ bool search_strategy(Strategy strategy, int distance, int speed, unsigned long m
 static bool rotation(int distance, int speed, unsigned long ms)
 {
     static uint16_t last = 0;
+    static Maybe<Edge_Signal> signal = Maybe<Edge_Signal>::Nothing();
 
     bool found = false;
 
-    Maybe<Edge_Signal> signal = Maybe<Edge_Signal>::Nothing();
 
     while (last < ms && !found)
     {

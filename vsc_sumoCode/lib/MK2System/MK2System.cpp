@@ -9,6 +9,7 @@ void MK2System::init()
     state.range = 0;
     state.speed = 0;
     state.stage = Stage::INIT;
+    state.edge_info = Maybe<Edge_Signal>::Nothing();
     state.ultra_info = {
         Maybe<double>::Nothing(),
         Maybe<double>::Nothing()};

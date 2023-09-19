@@ -28,7 +28,7 @@ void car_turn_right(int speed);
 
 void car_go_random(int speed);
 
-void car_adjust_attack_direction(Obj_direction info, double tolerance, int speed);
+void car_adjust_attack_direction(Obj_direction info, int speed);
 
 void car_stop(void);
 
@@ -41,6 +41,6 @@ bool is_obj_in_distance(Obj_direction info, double range);
 // range ~= 60
 Obj_direction obj_detection_info();
 
-bool is_adjusting_needed(Obj_direction info, double max_range, double tolerance);
+bool is_adjusting_needed(Obj_direction info, double tolerance);
 
 #endif // !_VEHICLE_UTILS_HPP_

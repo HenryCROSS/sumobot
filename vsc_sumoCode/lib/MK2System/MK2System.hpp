@@ -20,8 +20,9 @@ public:
         Stage stage;
         int speed;
         int range;
-        Obj_direction ultra_info;
         uint32_t custom_flag;
+        Obj_direction ultra_info;
+        Maybe<Edge_Signal> edge_info;
     };
 
     using Task = void (*)(VehState &);
