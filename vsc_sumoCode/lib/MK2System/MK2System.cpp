@@ -1,5 +1,17 @@
 #include "MK2System.hpp"
 
+MK2System::VehState MK2System::state;
+
+void MK2System::init()
+{
+    state.custom_flag = 0;
+    state.range = 0;
+    state.speed = 0;
+    state.stage = Stage::INIT;
+    state.ultra_info.left_sensor = Maybe<double>::Nothing();
+    state.ultra_info.right_sensor = Maybe<double>::Nothing();
+}
+
 void MK2System::run()
 {
     switch (state.stage)
@@ -9,7 +21,7 @@ void MK2System::run()
         break;
 
     default:
-        for(int8_t i = 0; i < tasks.size(); i++)
+        for(int i = 0; i < tasks.size(); i++)
         {
             tasks[i](state);
         }

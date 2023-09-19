@@ -2,6 +2,7 @@
 // #include <OLED_utils.hpp>
 #include <Configs.h>
 #include <Vehicle_utils.hpp>
+#include <MK2System.hpp>
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
@@ -27,6 +28,8 @@ void setup()
     pinMode(RIGHT_WHEEL_BACKWARD, OUTPUT);
     pinMode(LEFT_MOTOR, OUTPUT);
     pinMode(RIGHT_MOTOR, OUTPUT);
+
+    MK2System::init();
 
     if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
     { // Address 0x3D for 128x64
@@ -177,6 +180,7 @@ struct Test
 
     static void normal_mode()
     {
+        MK2System::run();
     }
 };
 
