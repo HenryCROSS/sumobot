@@ -30,7 +30,7 @@ void task_backward(MK2System::VehState &state)
     if (state.stage != MK2System::Stage::BACKWARD)
         return;
 
-    if (state.edge_info.hasValue())
+    if (state.edge_info.hasValue() || is_obj_in_distance(state.ultra_info, 20))
     {
         state.stage = MK2System::Stage::BATTLE;
     }
