@@ -9,7 +9,7 @@ void MK2System::run()
         break;
 
     default:
-        for(int8_t i = 0; i < MAX_TASKS; i++)
+        for(int8_t i = 0; i < tasks.size(); i++)
         {
             tasks[i](state);
         }
