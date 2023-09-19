@@ -96,22 +96,24 @@ TupleMut<OP_Vehicle, int> car_adjustment_measurement(double left_sensor, double 
     return TupleMut<OP_Vehicle, int>(OP_Vehicle::GO_LEFT, gap);
 }
 
-void car_adjust_attack_direction(Obj_direction info, int speed)
+int car_adjust_attack_direction(Obj_direction info, int speed)
 {
+    int actual_speed = speed;
     if (info.left_sensor.hasValue() && info.right_sensor.hasValue())
     {
         auto result = car_adjustment_measurement(info.left_sensor.getValue(), info.right_sensor.getValue());
         // double factor = (abs(result.snd) - tolerance) / result.snd;
 
         double factor = curve_algorithm(result.snd);
+        actual_speed = speed * factor;
 
         switch (result.fst)
         {
         case OP_Vehicle::GO_LEFT:
-            car_turn_left(speed * factor);
+            car_turn_left(actual_speed);
             break;
         case OP_Vehicle::GO_RIGHT:
-            car_turn_right(speed * factor);
+            car_turn_right(actual_speed);
             break;
         default:
             break;
@@ -121,13 +123,17 @@ void car_adjust_attack_direction(Obj_direction info, int speed)
     else if (info.left_sensor.hasValue())
     {
         double factor = curve_algorithm(1);
-        car_turn_left(speed * factor);
+        actual_speed = speed * factor;
+        car_turn_left(actual_speed);
     }
     else if (info.right_sensor.hasValue())
     {
         double factor = curve_algorithm(1);
-        car_turn_right(speed * factor);
+        actual_speed = speed * factor;
+        car_turn_right(actual_speed);
     }
+
+    return actual_speed;
 }
 
 void car_stop(void)

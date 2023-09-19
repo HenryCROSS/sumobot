@@ -3,6 +3,7 @@
 
 #include <Configs.h>
 #include <Tools.hpp>
+#include <Vehicle_actions.hpp>
 #include <Vehicle_types.hpp>
 
 class MK2System
@@ -18,6 +19,7 @@ public:
     struct VehState
     {
         Stage stage;
+        Strategy search_strategy;
         int speed;
         int range;
         uint32_t custom_flag;

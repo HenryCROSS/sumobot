@@ -28,7 +28,7 @@ void car_turn_right(int speed);
 
 void car_go_random(int speed);
 
-void car_adjust_attack_direction(Obj_direction info, int speed);
+int car_adjust_attack_direction(Obj_direction info, int speed);
 
 void car_stop(void);
 

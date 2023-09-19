@@ -38,7 +38,8 @@ void task_backward(MK2System::VehState &state)
     {
         car_turn_right_by_speed(130, 130);
         delay(TIMESLICE);
-        car_go_backward(160);
+        car_go_backward(130);
+        state.speed = 130;
         delay(TIMESLICE * 3);
     }
 }
@@ -54,18 +55,20 @@ void task_normal_attack(MK2System::VehState &state)
     {
         if (is_adjusting_needed(state.ultra_info, 1))
         {
-            car_adjust_attack_direction(state.ultra_info, 160);
+            state.speed = car_adjust_attack_direction(state.ultra_info, 160);
             delay(TIMESLICE * 3);
         }
         else
         {
             car_go_forward(160);
+            state.speed = 160;
             delay(TIMESLICE * 3);
         }
     }
     else
     {
-        search_strategy(Strategy::ROTATION, search_distance, 130, 500);
+        search_strategy(state.search_strategy, search_distance, 130, 500);
+        state.speed = 130;
     }
 }
 
@@ -76,7 +79,7 @@ void task_oled_display(MK2System::VehState &state)
     display.setTextColor(WHITE);
     display.setCursor(0, 0);
     // Display static text
-    display.print("stage:");
+    display.print("stage: ");
     switch (state.stage)
     {
     case MK2System::Stage::INIT:
@@ -92,15 +95,18 @@ void task_oled_display(MK2System::VehState &state)
         break;
     }
 
-    display.print("L:");
+    display.print("L: ");
     display.println(state.ultra_info.left_sensor.getValue());
-    display.print("R:");
+    display.print("R: ");
     display.println(state.ultra_info.right_sensor.getValue());
 
-    display.print("Edge:");
+    display.print("Speed: ");
+    display.println(state.speed);
+
+    display.print("Edge: ");
     if (state.edge_info.hasValue())
     {
-        display.println("Inside");
+        display.println("Void");
     }
     else
     {
