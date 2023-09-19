@@ -51,7 +51,31 @@ void task_normal_attack(MK2System::VehState &state)
 
     int search_distance = 40;
 
-    if (is_obj_in_distance(state.ultra_info, search_distance))
+    if (state.edge_info.hasValue())
+    {
+        switch (state.edge_info.getValue())
+        {
+        case Edge_Signal::BACK:
+            // TODO: maybe go random?
+            car_go_forward(160);
+            break;
+        case Edge_Signal::FRONT:
+            car_turn_left_by_speed(160, 160);
+            break;
+        case Edge_Signal::FRONT_LEFT:
+            car_turn_right_by_speed(160, 160);
+            break;
+        case Edge_Signal::FRONT_RIGHT:
+            car_turn_left_by_speed(160, 160);
+            break;
+        default:
+            break;
+        }
+
+        delay(TIMESLICE);
+        state.speed = 160;
+    }
+    else if (is_obj_in_distance(state.ultra_info, search_distance))
     {
         if (is_adjusting_needed(state.ultra_info, 1))
         {
