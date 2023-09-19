@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <Configs.h>
+#include <string.h>
 
 template <typename T, class Tag>
 class NewType
@@ -115,6 +116,93 @@ public:
 private:
     T data[SIZE];
     int len;
+};
+
+// WIP
+template <typename V, size_t Size>
+class Hashtable
+{
+public:
+    struct Node
+    {
+        String key;
+        V value;
+        bool empty;
+    };
+
+    Hashtable()
+    {
+        for (size_t i = 0; i < Size; i++)
+        {
+            table[i] = Node{
+                .key = "",
+                .value = V(),
+                .empty = true};
+        }
+    }
+
+    ~Hashtable()
+    {
+    }
+
+    // void insert(const String &key, V value)
+    // {
+    //     int i = 1;
+    //     Node &node = table[hash(key) % Size];
+    //     while (!node.empty && node.key != key)
+    //     {
+    //         node = table[(hash(key) + i) % Size];
+    //         i++;
+    //     }
+
+    //     node.empty = false;
+    //     node.key = key;
+    //     node.value = value;
+    // }
+
+    // void remove(const String &key)
+    // {
+    //     int i = 1;
+    //     Node &node = table[hash(key) % Size];
+    //     while (!node.empty && node.key != key)
+    //     {
+    //         node = table[(hash(key) + i) % Size];
+    //         i++;
+    //     }
+
+    //     node.empty = true;
+    // }
+
+    // V *find(const String &key)
+    // {
+    //     int i = 1;
+    //     Node &node = table[hash(key) % Size];
+    //     while (!node.empty && node.key != key && i < Size)
+    //     {
+    //         node = table[(hash(key) + i) % Size];
+    //         i++;
+    //     }
+    // }
+
+private:
+    Array<Node, Size> table;
+    size_t hash(const String &key)
+    {
+        return BKDRHash(key);
+    }
+
+    unsigned int BKDRHash(const String &str)
+    {
+        unsigned int seed = 131; // 31, 131, 1313, 13131, etc..
+        unsigned int hash = 0;
+
+        for (auto ch : str)
+        {
+            hash = hash * seed + ch;
+        }
+
+        return hash;
+    }
 };
 
 template <typename T>
