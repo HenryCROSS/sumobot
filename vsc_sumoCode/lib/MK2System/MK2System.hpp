@@ -22,7 +22,7 @@ public:
         int range;
         Obj_direction ultra_info;
         uint32_t custom_flag;
-    } static state;
+    };
 
     using Task = void (*)(VehState &);
 
@@ -32,7 +32,7 @@ public:
 
 private:
     static Array<Task, MAX_TASKS> tasks;
-    // static VehState state;
+    static VehState state;
 };
 
 #endif

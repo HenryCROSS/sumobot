@@ -14,6 +14,22 @@
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, 1);
 
+void task_searching(MK2System::VehState& state){
+    state.ultra_info = obj_detection_info();
+}
+
+void task_backward(MK2System::VehState& state){
+    if(state.stage == MK2System::Stage::BACKWARD){
+
+    }
+}
+
+void task_normal_attack(MK2System::VehState& state){
+    if(state.stage == MK2System::Stage::BATTLE){
+
+    }
+}
+
 void setup()
 {
     Serial.begin(9600);
@@ -30,6 +46,9 @@ void setup()
     pinMode(RIGHT_MOTOR, OUTPUT);
 
     MK2System::init();
+    MK2System::register_task(task_searching);
+    MK2System::register_task(task_backward);
+    MK2System::register_task(task_normal_attack);
 
     if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
     { // Address 0x3D for 128x64
@@ -189,6 +208,6 @@ struct Test
 void loop()
 {
     Serial.println("===============");
-    Test::trace_mode();
+    Test::normal_mode();
     delay(500);
 }

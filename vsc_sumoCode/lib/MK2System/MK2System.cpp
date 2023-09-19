@@ -1,6 +1,7 @@
 #include "MK2System.hpp"
 
 MK2System::VehState MK2System::state;
+Array<MK2System::Task, MAX_TASKS> MK2System::tasks;
 
 void MK2System::init()
 {
