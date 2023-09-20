@@ -6,6 +6,15 @@
 #include <Vehicle_actions.hpp>
 #include <Vehicle_types.hpp>
 
+enum class VehMotion
+{
+    TURNING,
+    FORWARD,
+    BACKWARD,
+    SEARCH,
+    VOID,
+};
+
 class MK2System
 {
 public:
@@ -20,6 +29,7 @@ public:
     {
         Stage stage;
         Strategy search_strategy;
+        VehMotion motion;
         int speed;
         int range;
         uint32_t custom_flag;

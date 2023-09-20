@@ -11,6 +11,7 @@ void MK2System::init()
     state.stage = Stage::INIT;
     state.edge_info = Maybe<Edge_Signal>::Nothing();
     state.search_strategy = Strategy::ROTATION;
+    state.motion = VehMotion::VOID;
     state.ultra_info = {
         Maybe<double>::Nothing(),
         Maybe<double>::Nothing()};

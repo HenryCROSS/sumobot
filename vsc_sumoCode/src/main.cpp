@@ -36,6 +36,7 @@ void task_backward(MK2System::VehState &state)
     }
     else
     {
+        state.motion = VehMotion::BACKWARD;
         car_turn_right_by_speed(130, 130);
         delay(TIMESLICE);
         car_go_backward(130);
@@ -53,6 +54,7 @@ void task_normal_attack(MK2System::VehState &state)
 
     if (state.edge_info.hasValue())
     {
+        state.motion = VehMotion::TURNING;
         switch (state.edge_info.getValue())
         {
         case Edge_Signal::BACK:
@@ -77,6 +79,7 @@ void task_normal_attack(MK2System::VehState &state)
     }
     else if (is_obj_in_distance(state.ultra_info, search_distance))
     {
+        state.motion = VehMotion::FORWARD;
         if (is_adjusting_needed(state.ultra_info, 1))
         {
             state.speed = car_adjust_attack_direction(state.ultra_info, 160);
@@ -91,6 +94,7 @@ void task_normal_attack(MK2System::VehState &state)
     }
     else
     {
+        state.motion = VehMotion::SEARCH;
         search_strategy(state.search_strategy, search_distance, 130, 500);
         state.speed = 130;
     }
@@ -151,6 +155,28 @@ void task_oled_display(MK2System::VehState &state)
         default:
             break;
         }
+    }
+
+    display.print("Motion: ");
+
+    switch (state.motion)
+    {
+    case VehMotion::VOID:
+        display.println("Void");
+        break;
+    case VehMotion::TURNING:
+        display.println("Turing");
+        break;
+    case VehMotion::FORWARD:
+        display.println("Forward");
+        break;
+    case VehMotion::BACKWARD:
+        display.println("Backward");
+        break;
+    case VehMotion::SEARCH:
+        display.println("Search");
+    default:
+        break;
     }
 
     display.display();
