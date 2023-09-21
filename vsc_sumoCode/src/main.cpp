@@ -134,10 +134,6 @@ void task_oled_display(MK2System::VehState &state)
     display.print("Edge: ");
     if (state.edge_info.hasValue())
     {
-        display.println("Void");
-    }
-    else
-    {
         switch (state.edge_info.getValue())
         {
         case Edge_Signal::BACK:
@@ -155,6 +151,10 @@ void task_oled_display(MK2System::VehState &state)
         default:
             break;
         }
+    }
+    else
+    {
+        display.println("Void");
     }
 
     display.print("Motion: ");
