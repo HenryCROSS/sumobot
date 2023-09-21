@@ -15,9 +15,11 @@
 #define QTR_SENSOR_FR A0         // qtr sensor
 #define QTR_SENSOR_B A1          // qtr sensor
 
-#define MAX_DISTANCE 200        // Max detect distance
-#define TIMESLICE 10            // time for each action lasts
-#define E 2.71828               // value of e
+#define MAX_DISTANCE (200)        // Max detect distance
+#define TIMESLICE (10)            // time for each action lasts
+#define E (2.71828)               // value of e
+
+#define QTR_THRESHOLD (500)
 
 #define MAX_TASKS 20
 
