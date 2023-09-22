@@ -19,7 +19,13 @@
 #define TIMESLICE (10)            // time for each action lasts
 #define E (2.71828)               // value of e
 
-#define QTR_THRESHOLD (500)
+// #define QTR_THRESHOLD (650)
+#define QTR_THRESHOLD (250)
+
+#define TEST_SPEED (130)
+#define SPEED (TEST_SPEED)
+
+
 
 #define MAX_TASKS 20
 

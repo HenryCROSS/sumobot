@@ -30,16 +30,16 @@ void task_backward(MK2System::VehState &state)
     if (state.stage != MK2System::Stage::BACKWARD)
         return;
 
-    if (state.edge_info.hasValue() || is_obj_in_distance(state.ultra_info, 20))
+    if (state.edge_info.hasValue() || is_obj_in_distance(state.ultra_info, 30))
     {
         state.stage = MK2System::Stage::BATTLE;
     }
     else
     {
         state.motion = VehMotion::BACKWARD;
-        car_turn_right_by_speed(130, 130);
+        car_turn_right_by_speed(SPEED, SPEED);
         delay(TIMESLICE);
-        car_go_backward(130);
+        car_go_backward(SPEED);
         state.speed = 130;
         delay(TIMESLICE * 3);
     }
@@ -59,16 +59,16 @@ void task_normal_attack(MK2System::VehState &state)
         {
         case Edge_Signal::BACK:
             // TODO: maybe go random?
-            car_go_forward(160);
+            car_go_forward(SPEED);
             break;
         case Edge_Signal::FRONT:
-            car_turn_left_by_speed(160, 160);
+            car_turn_left_by_speed(SPEED, SPEED);
             break;
         case Edge_Signal::FRONT_LEFT:
-            car_turn_right_by_speed(160, 160);
+            car_turn_right_by_speed(SPEED, SPEED);
             break;
         case Edge_Signal::FRONT_RIGHT:
-            car_turn_left_by_speed(160, 160);
+            car_turn_left_by_speed(SPEED, SPEED);
             break;
         default:
             break;
@@ -82,12 +82,12 @@ void task_normal_attack(MK2System::VehState &state)
         state.motion = VehMotion::FORWARD;
         if (is_adjusting_needed(state.ultra_info, 1))
         {
-            state.speed = car_adjust_attack_direction(state.ultra_info, 160);
+            state.speed = car_adjust_attack_direction(state.ultra_info, 150);
             delay(TIMESLICE * 3);
         }
         else
         {
-            car_go_forward(160);
+            car_go_forward(SPEED);
             state.speed = 160;
             delay(TIMESLICE * 3);
         }
@@ -95,7 +95,8 @@ void task_normal_attack(MK2System::VehState &state)
     else
     {
         state.motion = VehMotion::SEARCH;
-        search_strategy(state.search_strategy, search_distance, 130, 500);
+        // search_strategy(state.search_strategy, search_distance, SPEED, 500);
+        car_go_forward(SPEED);
         state.speed = 130;
     }
 }
