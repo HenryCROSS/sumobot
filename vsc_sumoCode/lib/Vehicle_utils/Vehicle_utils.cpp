@@ -166,20 +166,20 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
     Serial.println(String("BK: ") + back);
 
     // TODO: change back
-    if (frontL >= QTR_THRESHOLD && frontR >= QTR_THRESHOLD)
+    if (frontL <= QTR_THRESHOLD && frontR <= QTR_THRESHOLD)
     {
         return Maybe(Edge_Signal::FRONT);
     }
-    else if (frontL >= QTR_THRESHOLD)
+    else if (frontL <= QTR_THRESHOLD)
     {
 
         return Maybe(Edge_Signal::FRONT_LEFT);
     }
-    else if (frontR >= QTR_THRESHOLD)
+    else if (frontR <= QTR_THRESHOLD)
     {
         return Maybe(Edge_Signal::FRONT_RIGHT);
     }
-    else if (back >= QTR_THRESHOLD)
+    else if (back <= QTR_THRESHOLD)
     {
         return Maybe(Edge_Signal::BACK);
     }

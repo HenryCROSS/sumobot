@@ -22,7 +22,7 @@ void MK2System::run()
     switch (state.stage)
     {
     case Stage::INIT:
-        state.stage = Stage::BACKWARD;
+        state.stage = Stage::BATTLE;
         break;
 
     default:

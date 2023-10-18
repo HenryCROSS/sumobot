@@ -91,6 +91,8 @@ void task_normal_attack(MK2System::VehState &state)
             state.speed = 160;
             delay(TIMESLICE * 3);
         }
+        car_go_forward(SPEED);
+        state.speed = 130;
     }
     else
     {
@@ -361,6 +363,19 @@ struct Test
 void loop()
 {
     Serial.println("===============");
-    Test::normal_mode();
-    delay(500);
+    // Test::normal_mode();
+    attack_strategy(100, 100);
+
+    // car_go_forward(100);
+    // car_go_backward(100);
+
+    // car_turn_left(100);
+    // delay(3000);
+    // car_turn_right(100);
+    // delay(3000);
+    // car_turn_left_by_speed(100, 100);
+    // delay(3000);
+    // car_turn_right_by_speed(100, 0);
+
+    delay(1000);
 }
