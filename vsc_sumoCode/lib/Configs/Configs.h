@@ -26,7 +26,7 @@
 #define QTR_THRESHOLD (650)
 // #define QTR_THRESHOLD (250)
 
-#define TEST_SPEED (60)
+#define TEST_SPEED (75)
 #define SPEED (TEST_SPEED)
 
 
