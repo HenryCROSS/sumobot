@@ -100,8 +100,8 @@ void task_normal_attack(MK2System::VehState &state)
                 delay(TIMESLICE * 3);
             }
         }
-        car_go_forward(SPEED);
-        state.speed = SPEED;
+        //car_go_forward(SPEED);
+        //state.speed = SPEED;
     }
     else
     {
