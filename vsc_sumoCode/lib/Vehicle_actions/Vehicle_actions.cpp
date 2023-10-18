@@ -70,6 +70,7 @@ static bool rotation(int distance, int speed, unsigned long ms)
     return found;
 }
 
+// TODO: might have a better implementation
 void attack_strategy(int speed, unsigned long ms){
     car_go_backward(speed * 0.7);
     delay(ms);
