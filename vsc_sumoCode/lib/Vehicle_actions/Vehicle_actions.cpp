@@ -28,7 +28,6 @@ static bool rotation(int distance, int speed, unsigned long ms)
 
     bool found = false;
 
-
     while (last < ms && !found)
     {
         if (signal.hasValue())
@@ -71,8 +70,19 @@ static bool rotation(int distance, int speed, unsigned long ms)
 }
 
 // TODO: might have a better implementation
-void attack_strategy(int speed, unsigned long ms){
-    car_go_backward(speed * 0.7);
-    delay(ms);
-    car_go_forward(speed);
+void attack_strategy(int speed, unsigned long ms)
+{
+    static int counter = 0;
+    counter += ms;
+
+    if (counter >= 2000)
+    {
+        car_go_backward(speed * 0.7);
+        delay(ms);
+        car_go_forward(speed);
+        delay(ms);
+    } else {
+        car_go_forward(speed);
+        delay(ms);
+    }
 }

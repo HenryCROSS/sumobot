@@ -92,7 +92,6 @@ void task_normal_attack(MK2System::VehState &state)
             if (is_obj_in_distance(state.ultra_info, 10))
             {
                 attack_strategy(120, TIMESLICE * 3);
-                delay(TIMESLICE * 3);
             }
             else
             {
