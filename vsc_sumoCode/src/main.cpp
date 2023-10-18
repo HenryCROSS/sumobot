@@ -107,8 +107,8 @@ void task_normal_attack(MK2System::VehState &state)
     else
     {
         state.motion = VehMotion::SEARCH;
-        // search_strategy(state.search_strategy, search_distance, SPEED, 500);
-        car_go_forward(SPEED);
+        search_strategy(state.search_strategy, search_distance, SPEED, 500);
+        // car_go_forward(SPEED);
         state.speed = SPEED;
     }
 }
