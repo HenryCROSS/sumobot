@@ -70,7 +70,7 @@ static bool rotation(int distance, int speed, unsigned long ms)
     return found;
 }
 
-bool attack_strategy(int speed, unsigned long ms){
+void attack_strategy(int speed, unsigned long ms){
     car_go_backward(speed * 0.7);
     delay(ms);
     car_go_forward(speed);
