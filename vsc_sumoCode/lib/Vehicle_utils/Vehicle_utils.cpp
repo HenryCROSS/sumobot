@@ -259,3 +259,22 @@ bool is_adjusting_needed(Obj_direction info, double tolerance)
     }
     return false;
 }
+
+double calculate_gap(Obj_direction info)
+{
+    if (info.left_sensor.hasValue() && info.right_sensor.hasValue())
+    {
+        auto lv = info.left_sensor.getValue();
+        auto rv = info.right_sensor.getValue();
+        // TODO: need an algorithm
+        double x = 1;
+
+        return x;
+    }
+    else if (info.left_sensor.hasValue() || info.right_sensor.hasValue())
+    {
+        return -1;
+    }
+
+    return -1;
+}

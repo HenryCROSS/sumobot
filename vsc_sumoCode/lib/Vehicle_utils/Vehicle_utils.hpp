@@ -30,8 +30,10 @@ void car_turn_left(int speed);
 
 void car_turn_right(int speed);
 
+// speed 75
 void car_turn_left_by_degree(double degree);
 
+// speed 75
 void car_turn_right_by_degree(double degree);
 
 void car_go_random(int speed);
@@ -45,6 +47,8 @@ Maybe<double> detect_obj_distance(uint8_t trigger_pin, uint8_t echo_pin);
 Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sensor_front_right, uint8_t qtr_sensor_back);
 
 bool is_obj_in_distance(Obj_direction info, double range);
+
+double calculate_gap(Obj_direction info);
 
 // range ~= 60
 Obj_direction obj_detection_info();

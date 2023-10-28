@@ -62,9 +62,10 @@ void task_normal_attack(MK2System::VehState &state)
         state.motion = VehMotion::FORWARD;
 
         // calculation of the gap
-        auto gap = abs(state.ultra_info.left_sensor.getValue() - state.ultra_info.left_sensor.getValue());
+        // auto gap = abs(state.ultra_info.left_sensor.getValue() - state.ultra_info.left_sensor.getValue());
+        auto gap = calculate_gap(state.ultra_info);
 
-        if (gap > 6 && is_adjusting_needed(state.ultra_info, gap))
+        if (is_adjusting_needed(state.ultra_info, gap))
         {
             state.speed = car_adjust_attack_direction(state.ultra_info, SPEED);
             delay(TIMESLICE * 3);
