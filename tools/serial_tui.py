@@ -24,11 +24,13 @@ is_running = True
 restart = False
 interval = 1/60
 monitoring_rate = 0.0001 # sec
+connection_success = True
 
 def cmd_monitor_port():
     while is_running:
-        global restart
+        global restart, connection_success
         restart = False
+        connection_success = True
         try:
             with serial.Serial(port, baudrate, timeout= 1) as ser:
                 while not restart and is_running:
@@ -37,6 +39,7 @@ def cmd_monitor_port():
                     data.append(line.decode().rstrip())
                     time.sleep(monitoring_rate)
         except:
+            connection_success = False
             time.sleep(monitoring_rate)
 
 class OutputConsole(Static):    
@@ -85,6 +88,7 @@ class TopPart(Static):
         elif event.button.id == "restart":
             global restart
             restart = True
+            ...
         
     def get_filter_content(self) -> str:
         return self.filter_content
@@ -234,6 +238,11 @@ class ContentSwitcherApp(App[None]):
         if new_port != port or new_baudrate != baudrate:
             title = f"port: {port} -> {new_port} | baudrate: {baudrate} -> {new_baudrate} | need to restart"
         self.app.screen.title = title
+        
+        if connection_success:
+            self.app.screen.sub_title = ""
+        else:
+            self.app.screen.sub_title = "[Connection Failed]"
     
 
 if __name__ == "__main__":
