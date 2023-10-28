@@ -16,7 +16,11 @@ void wheel_move_speed(uint8_t pin, int speed);
 
 void car_go_forward(int speed);
 
+void car_go_forward_by_speed(int left_wheel_speed, int right_wheel_speed);
+
 void car_go_backward(int speed);
+
+void car_go_backward_by_speed(int left_wheel_speed, int right_wheel_speed);
 
 void car_turn_right_by_speed(int left_wheel_forward_speed, int right_wheel_backward_speed);
 
@@ -25,6 +29,10 @@ void car_turn_left_by_speed(int left_wheel_backward_speed, int right_wheel_forwa
 void car_turn_left(int speed);
 
 void car_turn_right(int speed);
+
+void car_turn_left_by_degree(double degree);
+
+void car_turn_right_by_degree(double degree);
 
 void car_go_random(int speed);
 

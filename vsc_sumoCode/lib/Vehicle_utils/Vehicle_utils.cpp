@@ -35,10 +35,26 @@ void car_go_forward(int speed)
     wheel_forward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
 
+void car_go_forward_by_speed(int left_wheel_speed, int right_wheel_speed)
+{
+    wheel_move_speed(LEFT_MOTOR, left_wheel_speed);
+    wheel_move_speed(RIGHT_MOTOR, right_wheel_speed);
+    wheel_forward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
+    wheel_forward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
+}
+
 void car_go_backward(int speed)
 {
     wheel_move_speed(LEFT_MOTOR, speed);
     wheel_move_speed(RIGHT_MOTOR, speed);
+    wheel_backward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
+    wheel_backward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
+}
+
+void car_go_backward_by_speed(int left_wheel_speed, int right_wheel_speed)
+{
+    wheel_move_speed(LEFT_MOTOR, left_wheel_speed);
+    wheel_move_speed(RIGHT_MOTOR, right_wheel_speed);
     wheel_backward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
     wheel_backward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
@@ -67,6 +83,24 @@ void car_turn_left(int speed)
 void car_turn_right(int speed)
 {
     car_turn_right_by_speed(0, speed);
+}
+
+void car_turn_left_by_degree(double degree)
+{
+    wheel_move_speed(LEFT_MOTOR, 0);
+    wheel_move_speed(RIGHT_MOTOR, 75);
+    wheel_forward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
+    wheel_backward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
+    delay(ROTATE_ONE_DEGREE_IN_MS * degree);
+}
+
+void car_turn_right_by_degree(double degree)
+{
+    wheel_move_speed(LEFT_MOTOR, 75);
+    wheel_move_speed(RIGHT_MOTOR, 0);
+    wheel_forward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
+    wheel_backward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
+    delay(ROTATE_ONE_DEGREE_IN_MS * degree);
 }
 
 void car_go_random(int speed)

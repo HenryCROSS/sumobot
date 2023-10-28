@@ -29,6 +29,7 @@
 #define TEST_SPEED (75)
 #define SPEED (TEST_SPEED)
 
+#define ROTATE_ONE_DEGREE_IN_MS (180.0 / 480.0) //in speed 75, not accurate
 
 
 #define MAX_TASKS 20
