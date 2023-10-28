@@ -25,27 +25,6 @@ void task_qtr(MK2System::VehState &state)
     state.edge_info = determine_edge(QTR_SENSOR_FL, QTR_SENSOR_FR, QTR_SENSOR_B);
 }
 
-// XXX: useless
-// void task_backward(MK2System::VehState &state)
-// {
-//     if (state.stage != MK2System::Stage::BACKWARD)
-//         return;
-
-//     if (state.edge_info.hasValue() || is_obj_in_distance(state.ultra_info, 30))
-//     {
-//         state.stage = MK2System::Stage::BATTLE;
-//     }
-//     else
-//     {
-//         state.motion = VehMotion::BACKWARD;
-//         car_turn_right_by_speed(SPEED, SPEED);
-//         delay(TIMESLICE);
-//         car_go_backward(SPEED);
-//         state.speed = 130;
-//         delay(TIMESLICE * 3);
-//     }
-// }
-
 void task_normal_attack(MK2System::VehState &state)
 {
     if (state.stage != MK2System::Stage::BATTLE)
@@ -66,10 +45,10 @@ void task_normal_attack(MK2System::VehState &state)
             car_turn_left_by_speed(SPEED, SPEED);
             break;
         case Edge_Signal::FRONT_LEFT:
-            car_turn_right_by_speed(SPEED, SPEED);
+            car_turn_left_by_speed(SPEED, SPEED);
             break;
         case Edge_Signal::FRONT_RIGHT:
-            car_turn_left_by_speed(SPEED, SPEED);
+            car_turn_right_by_speed(SPEED, SPEED);
             break;
         default:
             break;
@@ -81,7 +60,11 @@ void task_normal_attack(MK2System::VehState &state)
     else if (is_obj_in_distance(state.ultra_info, search_distance))
     {
         state.motion = VehMotion::FORWARD;
-        if (is_adjusting_needed(state.ultra_info, 1))
+
+        // calculation of the gap
+        auto gap = abs(state.ultra_info.left_sensor.getValue() - state.ultra_info.left_sensor.getValue());
+
+        if (gap > 6 && is_adjusting_needed(state.ultra_info, gap))
         {
             state.speed = car_adjust_attack_direction(state.ultra_info, SPEED);
             delay(TIMESLICE * 3);
@@ -91,7 +74,13 @@ void task_normal_attack(MK2System::VehState &state)
             // attack strategy
             if (is_obj_in_distance(state.ultra_info, 10))
             {
-                attack_strategy(120, TIMESLICE * 3);
+                // attack_strategy(120, TIMESLICE * 10);
+                car_go_forward(255);
+            }
+            else if (is_obj_in_distance(state.ultra_info, 20))
+            {
+                // attack_strategy(120, TIMESLICE * 10);
+                car_go_forward(155);
             }
             else
             {
@@ -100,8 +89,6 @@ void task_normal_attack(MK2System::VehState &state)
                 delay(TIMESLICE * 3);
             }
         }
-        //car_go_forward(SPEED);
-        //state.speed = SPEED;
     }
     else
     {
@@ -127,9 +114,6 @@ void task_oled_display(MK2System::VehState &state)
         break;
     case MK2System::Stage::BATTLE:
         display.println("Battle");
-        break;
-    case MK2System::Stage::BACKWARD:
-        display.println("Backward");
         break;
     default:
         break;
@@ -212,7 +196,6 @@ void setup()
     MK2System::init();
     MK2System::register_task(task_searching);
     MK2System::register_task(task_qtr);
-    // MK2System::register_task(task_backward);
     MK2System::register_task(task_normal_attack);
     MK2System::register_task(task_oled_display);
 
@@ -229,9 +212,9 @@ void setup()
     display.setTextColor(WHITE);
     display.setCursor(0, 10);
     // Display static text
-    display.println("Hello, world!");
+    display.println("CHARGE!!");
     display.display();
-    delay(1000);
+    delay(4000);
 }
 
 struct Test
@@ -375,5 +358,9 @@ void loop()
     Test::normal_mode();
     // attack_strategy(100, 100);
 
-    delay(1000);
+    // car_turn_left_by_speed(SPEED, 0);
+    // delay(480);
+
+    // car_stop();
+    // delay(1000);
 }

@@ -22,7 +22,6 @@ public:
     {
         INIT,
         BATTLE,
-        BACKWARD,
     };
 
     struct VehState

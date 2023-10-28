@@ -2,8 +2,8 @@
 #define SPEEDB 9               // Motor B enable pin
 #define RIGHT_WHEEL_FORWARD 3  // Motor B In1 pin
 #define RIGHT_WHEEL_BACKWARD 2 // Motor B In2 pin
-#define LEFT_WHEEL_FORWARD 5   // Motor A In1 pin
-#define LEFT_WHEEL_BACKWARD 4  // Motor A In2 pin
+#define LEFT_WHEEL_FORWARD 4   // Motor A In1 pin
+#define LEFT_WHEEL_BACKWARD 5  // Motor A In2 pin
 #define TRIGGER_PIN 6          // Ultrasonic sensor trigger pin
 #define ECHO_PIN 7             // Ultrasonic sensor echo pin
 #define QTR_SENSOR_FL A5       // qtr sensor
@@ -70,6 +70,9 @@ void car_go_forward(int speed)
 {
     wheel_move_speed(SPEEDA, speed);
     wheel_move_speed(SPEEDB, speed);
+    // Serial.println(frontL);
+    // Serial.print("FrontR: ");
+    // Serial.println(frontR);
     wheel_forward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
     wheel_forward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
@@ -131,6 +134,8 @@ Edge_direction determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sensor_
 
     // Serial.print("FrontL: ");
     // Serial.println(frontL);
+    // Serial.print("FrontR: ");
+    // Serial.println(frontR);
 
     if (frontL <= 400 && frontR <= 400)
     {
@@ -168,6 +173,7 @@ template <typename Fn, typename... Args> void do_actions_duration(unsigned long 
 bool is_obj_exist(double range)
 {
     double distance = detect_obj_distance(TRIGGER_PIN, ECHO_PIN);
+    // Serial.println(distance);
 
     if (distance < range)
     {
@@ -207,24 +213,25 @@ void loop()
     static Edge_direction prev_turning_edge;
     auto edge = determine_edge(QTR_SENSOR_FL, QTR_SENSOR_FR);
 
+
     Serial.println("======");
     switch (edge)
     {
     case Edge_direction::FRONT:
-        // Serial.println("Go backward");
+        Serial.println("Go backward");
         do_actions_duration(300, car_go_backward, 100);
         do_actions_duration(150, car_turn_right_by_speed, 90, 90);
         prev_turning_edge = edge;
         break;
 
     case Edge_direction::FRONT_LEFT:
-        // Serial.println("Front left");
+        Serial.println("Front left");
         do_actions_duration(1, car_turn_right_by_speed, 100, 100);
         prev_turning_edge = edge;
         break;
 
     case Edge_direction::FRONT_RIGHT:
-        // Serial.println("Front right");
+        Serial.println("Front right");
         do_actions_duration(1, car_turn_left_by_speed, 100, 100);
         prev_turning_edge = edge;
         break;
