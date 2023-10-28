@@ -29,12 +29,15 @@ def cmd_monitor_port():
     while is_running:
         global restart
         restart = False
-        with serial.Serial(port, baudrate, timeout= 1) as ser:
-            while not restart and is_running:
-                line = ser.readline()
+        try:
+            with serial.Serial(port, baudrate, timeout= 1) as ser:
+                while not restart and is_running:
+                    line = ser.readline()
 
-                data.append(line.decode().rstrip())
-                time.sleep(monitoring_rate)
+                    data.append(line.decode().rstrip())
+                    time.sleep(monitoring_rate)
+        except:
+            time.sleep(monitoring_rate)
 
 class OutputConsole(Static):    
     def compose(self) -> ComposeResult:
@@ -57,7 +60,7 @@ class TopPart(Static):
             with Horizontal(id="filterBar"):
                 yield Input(placeholder="Filter", id="filter")
             with Horizontal():
-                yield Input(placeholder="File", id="file")
+                yield Input(placeholder="File: data.log", id="file")
                 yield Button("Save", id="save")
                 yield Button("Restart", id="restart")
         
@@ -141,8 +144,8 @@ class MainPage(Static):
     def update_log(self):
         if restart:
             self.state["log_line"] = 0
-            self.query_one("BottomPart").clear_nonfiltered_log()
-            self.query_one("BottomPart").clear_filtered_log()
+            self.query_one(BottomPart).clear_nonfiltered_log()
+            self.query_one(BottomPart).clear_filtered_log()
             data.clear()
             
             global baudrate, new_baudrate, port, new_port
@@ -155,15 +158,15 @@ class MainPage(Static):
             line = data[self.state["log_line"]]
             self.state["log_line"] += 1
             
-            self.query_one("BottomPart").write_nonfiltered_log(line)
+            self.query_one(BottomPart).write_nonfiltered_log(line)
             
             pattern = self.state['filter_content']
             if (pattern == "" or re.search(pattern, line) is not None):
-                self.query_one("BottomPart").write_filtered_log(line)
+                self.query_one(BottomPart).write_filtered_log(line)
                 
         
     def get_filter_content(self):
-        new_content = self.query_one("TopPart").get_filter_content()
+        new_content = self.query_one(TopPart).get_filter_content()
         if(new_content is not self.state['filter_content']):
             self.state['filter_content'] = new_content
 
@@ -175,6 +178,9 @@ class ConfigTable(Static):
         yield Input(placeholder="COM3", id="port")
         yield Label("Baudrate")
         yield Input(placeholder="9600", id="baudrate")
+        yield Label(" ")
+        yield Label("Port list:")
+        yield Log()
 
     
     @on(Input.Changed)
@@ -191,6 +197,16 @@ class ConfigTable(Static):
                 new_baudrate = 9600
             else:
                 new_baudrate = event.value
+    
+    def on_mount(self):
+        self.update_port_list = self.set_interval(interval, self.update_port_list)
+    
+    def update_port_list(self):
+        log = self.query_one(Log)
+        log.clear()
+        for p in serial.tools.list_ports.comports():
+            log.write_line(str(p))
+        
         
 class ContentSwitcherApp(App[None]):
     
