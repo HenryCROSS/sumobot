@@ -30,9 +30,9 @@ def cmd_monitor_port():
     while is_running:
         global restart, connection_success
         restart = False
-        connection_success = True
         try:
             with serial.Serial(port, baudrate, timeout= 1) as ser:
+                connection_success = True
                 while not restart and is_running:
                     line = ser.readline()
 
