@@ -1,7 +1,7 @@
 # README:
 # To run this script, you need to install 2 libs
 # pip install pyserial
-# pip textual
+# pip install textual
 
 from textual import on
 from textual.app import App, ComposeResult
@@ -85,7 +85,6 @@ class TopPart(Static):
         elif event.button.id == "restart":
             global restart
             restart = True
-            ...
         
     def get_filter_content(self) -> str:
         return self.filter_content
