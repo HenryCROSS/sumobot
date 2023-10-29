@@ -16,7 +16,7 @@ import re
 import time
 
 
-class GLOBAL_DATA:
+class GLOBAL:
     port = "COM3"
     new_port = "COM3"
     baudrate = 9600
@@ -30,18 +30,18 @@ class GLOBAL_DATA:
     
 
 def cmd_monitor_port():
-    while GLOBAL_DATA.is_running:
-        GLOBAL_DATA.restart = False
+    while GLOBAL.is_running:
+        GLOBAL.restart = False
         try:
-            with serial.Serial(GLOBAL_DATA.port, GLOBAL_DATA.baudrate, timeout= 1) as ser:
-                GLOBAL_DATA.connection_success = True
-                while not GLOBAL_DATA.restart and GLOBAL_DATA.is_running:
+            with serial.Serial(GLOBAL.port, GLOBAL.baudrate, timeout= 1) as ser:
+                GLOBAL.connection_success = True
+                while not GLOBAL.restart and GLOBAL.is_running:
                     line = ser.readline()
 
-                    GLOBAL_DATA.data.append(line.decode().rstrip())
-                    time.sleep(GLOBAL_DATA.monitoring_rate)
+                    GLOBAL.data.append(line.decode().rstrip())
+                    time.sleep(GLOBAL.monitoring_rate)
         except:
-            GLOBAL_DATA.connection_success = False
+            GLOBAL.connection_success = False
             time.sleep(1)
 
 class OutputConsole(Static):    
@@ -90,7 +90,7 @@ class TopPart(Static):
         if event.button.id == "save":
             self.save_file()
         elif event.button.id == "restart":
-            GLOBAL_DATA.restart = True
+            GLOBAL.restart = True
         
     def get_filter_content(self) -> str:
         return self.filter_content
@@ -103,7 +103,7 @@ class TopPart(Static):
             self.file_name = "data.log"
         with open(self.file_name, 'w+') as file:
             pattern = self.filter_content
-            output_lines = filter(lambda line: pattern == "" or re.search(pattern, line) is not None, GLOBAL_DATA.data)
+            output_lines = filter(lambda line: pattern == "" or re.search(pattern, line) is not None, GLOBAL.data)
             output_lines = map(lambda line: line + "\n", output_lines)
             file.writelines(output_lines)
         
@@ -138,8 +138,8 @@ class MainPage(Static):
                 yield BottomPart()
 
     def on_mount(self):
-        self.update_filter_content = self.set_interval(GLOBAL_DATA.interval, self.get_filter_content)
-        self.update_log = self.set_interval(GLOBAL_DATA.interval, self.update_log)
+        self.update_filter_content = self.set_interval(GLOBAL.interval, self.get_filter_content)
+        self.update_log = self.set_interval(GLOBAL.interval, self.update_log)
         
         self.state = {
             "filter_content": "",
@@ -148,18 +148,18 @@ class MainPage(Static):
         }
         
     def update_log(self):
-        if GLOBAL_DATA.restart:
+        if GLOBAL.restart:
             self.state["log_line"] = 0
             self.query_one(BottomPart).clear_nonfiltered_log()
             self.query_one(BottomPart).clear_filtered_log()
             
-            GLOBAL_DATA.data.clear()
-            GLOBAL_DATA.baudrate = GLOBAL_DATA.new_baudrate
-            GLOBAL_DATA.port = GLOBAL_DATA.new_port
+            GLOBAL.data.clear()
+            GLOBAL.baudrate = GLOBAL.new_baudrate
+            GLOBAL.port = GLOBAL.new_port
         
-        length = len(GLOBAL_DATA.data)
+        length = len(GLOBAL.data)
         while self.state["log_line"] < length:
-            line = GLOBAL_DATA.data[self.state["log_line"]]
+            line = GLOBAL.data[self.state["log_line"]]
             self.state["log_line"] += 1
             
             self.query_one(BottomPart).write_nonfiltered_log(line)
@@ -191,17 +191,17 @@ class ConfigTable(Static):
     def update_input_content(self, event: Input.Changed):
         if event.input.id == "port":
             if event.value == "":
-                GLOBAL_DATA.new_port = "COM3"
+                GLOBAL.new_port = "COM3"
             else:
-                GLOBAL_DATA.new_port = event.value
+                GLOBAL.new_port = event.value
         elif event.input.id == "baudrate":
             if event.value == "":
-                GLOBAL_DATA.new_baudrate = 9600
+                GLOBAL.new_baudrate = 9600
             else:
-                GLOBAL_DATA.new_baudrate = event.value
+                GLOBAL.new_baudrate = event.value
     
     def on_mount(self):
-        self.update_port_list = self.set_interval(GLOBAL_DATA.interval, self.update_port_list)
+        self.update_port_list = self.set_interval(GLOBAL.interval, self.update_port_list)
     
     def update_port_list(self):
         log = self.query_one(Log)
@@ -230,15 +230,15 @@ class ContentSwitcherApp(App[None]):
             self.query_one(ContentSwitcher).current = "main"
     
     def on_mount(self):
-        self.update_title = self.set_interval(GLOBAL_DATA.interval, self.update_header)
+        self.update_title = self.set_interval(GLOBAL.interval, self.update_header)
     
     def update_header(self):
-        title = f"port: {GLOBAL_DATA.port} | baudrate: {GLOBAL_DATA.baudrate}"
-        if GLOBAL_DATA.new_port != GLOBAL_DATA.port or GLOBAL_DATA.new_baudrate != GLOBAL_DATA.baudrate:
-            title = f"port: {GLOBAL_DATA.port} -> {GLOBAL_DATA.new_port} | baudrate: {GLOBAL_DATA.baudrate} -> {GLOBAL_DATA.new_baudrate} | need to restart"
+        title = f"port: {GLOBAL.port} | baudrate: {GLOBAL.baudrate}"
+        if GLOBAL.new_port != GLOBAL.port or GLOBAL.new_baudrate != GLOBAL.baudrate:
+            title = f"port: {GLOBAL.port} -> {GLOBAL.new_port} | baudrate: {GLOBAL.baudrate} -> {GLOBAL.new_baudrate} | need to restart"
         self.app.screen.title = title
         
-        if GLOBAL_DATA.connection_success:
+        if GLOBAL.connection_success:
             self.app.screen.sub_title = ""
         else:
             self.app.screen.sub_title = "[Connection Failed]"
@@ -250,6 +250,6 @@ if __name__ == "__main__":
     handle.start()
     
     ContentSwitcherApp().run()
-    GLOBAL_DATA.is_running = ContentSwitcherApp().is_running
+    GLOBAL.is_running = ContentSwitcherApp().is_running
     
     handle.join()
