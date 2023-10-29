@@ -78,11 +78,13 @@ void task_normal_attack(MK2System::VehState &state)
             {
                 // attack_strategy(120, TIMESLICE * 10);
                 car_go_forward(255);
+                state.speed = 255;
             }
             else if (is_obj_in_distance(state.ultra_info, 20))
             {
                 // attack_strategy(120, TIMESLICE * 10);
                 car_go_forward(155);
+                state.speed = 155;
             }
             else
             {
