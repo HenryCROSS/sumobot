@@ -12,6 +12,7 @@ enum class VehMotion
     FORWARD,
     BACKWARD,
     SEARCH,
+    ADJUST,
     VOID,
 };
 

@@ -67,6 +67,7 @@ void task_normal_attack(MK2System::VehState &state)
 
         if (is_adjusting_needed(state.ultra_info, gap))
         {
+            state.motion = VehMotion::ADJUS;
             state.speed = car_adjust_attack_direction(state.ultra_info, SPEED);
             delay(TIMESLICE * 3);
         }
@@ -169,6 +170,9 @@ void task_oled_display(MK2System::VehState &state)
         break;
     case VehMotion::BACKWARD:
         display.println("Backward");
+        break;
+    case VehMotion::ADJUST:
+        display.println("Adjust");
         break;
     case VehMotion::SEARCH:
         display.println("Search");
