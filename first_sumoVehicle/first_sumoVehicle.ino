@@ -196,13 +196,10 @@ void search_strategy(Edge_direction edge)
         break;
 
     case Edge_direction::FRONT_RIGHT:
+    case Edge_direction::NONE:
     default:
         // Serial.print("turn left ");
         car_turn_left_by_speed(80, 80);
-        break;
-
-    case Edge_direction::NONE:
-        // Serial.println("???");
         break;
     }
 }
