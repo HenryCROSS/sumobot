@@ -19,6 +19,7 @@ namespace debug
             Serial.print(str);
         }
     }
+
 } // namespace debug
 
 
