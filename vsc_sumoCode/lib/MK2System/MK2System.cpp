@@ -39,15 +39,15 @@ TaskId MK2System::register_task(const Task_Fn fn, Task_Type type, int life, uint
         return TaskId(-1);
     }
 
-    auto task = Task{
-        .start = false,
-        .life = life,
-        .fn = fn,
-        .type = type,
-        .delay = delay,
-        .interval = interval,
-        .prev_time = millis(),
-    };
+ 
+    Task task;
+    task.start = false,
+    task.life = life,
+    task.fn = fn,
+    task.type = type,
+    task.delay = delay,
+    task.interval = interval,
+    task.prev_time = millis(),
 
     tasks.push_back(task);
     return TaskId(tasks.size() - 1);
