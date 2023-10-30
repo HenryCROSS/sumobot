@@ -11,7 +11,8 @@ void MK2System::run()
     for (int i = 0; i < tasks.size(); i++)
     {
         auto task = tasks[i];
-        if (task.type == Task_Type::PREEMPTIVE)
+
+        if (task.type == Task_Type::PREEMPTIVE && (task.life == -1 || task.life > 0))
         {
             task.fn();
         }
@@ -22,19 +23,20 @@ void MK2System::run()
                 ((current_time - task.prev_time) >= task.interval ||
                  (!task.start && (current_time - task.prev_time) >= task.delay && (task.start = true))))
             {
-                task.life = task.life > 0 ? (task.life - 1) : -1;
                 task.prev_time = current_time;
                 task.fn();
             }
         }
+
+        task.life = task.life > 0 ? (task.life - 1) : -1;
     }
 }
 
-int MK2System::register_task(const Task_Fn fn, Task_Type type, int life, uint64_t delay, uint64_t interval)
+TaskId MK2System::register_task(const Task_Fn fn, Task_Type type, int life, uint64_t delay, uint64_t interval)
 {
     if (tasks.size() >= tasks.capacity())
     {
-        return -1;
+        return TaskId(-1);
     }
 
     auto task = Task{
@@ -48,5 +50,5 @@ int MK2System::register_task(const Task_Fn fn, Task_Type type, int life, uint64_
     };
 
     tasks.push_back(task);
-    return tasks.size() - 1;
+    return TaskId(tasks.size() - 1);
 }

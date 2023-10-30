@@ -6,6 +6,9 @@
 #include <Vehicle_actions.hpp>
 #include <Vehicle_types.hpp>
 
+struct TaskIdTag{};
+using TaskId = NewType<int, TaskIdTag>;
+
 enum class Task_Type
 {
     PREEMPTIVE,
@@ -31,7 +34,7 @@ public:
     static void init();
     static void run();
     // return task id
-    static int register_task(Task_Fn fn, Task_Type type, int life, uint64_t delay = 0, uint64_t interval = 0);
+    static TaskId register_task(Task_Fn fn, Task_Type type, int life, uint64_t delay = 0, uint64_t interval = 0);
 
 private:
     static Array<Task, MAX_TASKS> tasks;
