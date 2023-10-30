@@ -67,7 +67,7 @@ void task_normal_attack(MK2System::VehState &state)
 
         if (is_adjusting_needed(state.ultra_info, gap))
         {
-            state.motion = VehMotion::ADJUS;
+            state.motion = VehMotion::ADJUST;
             state.speed = car_adjust_attack_direction(state.ultra_info, SPEED);
             delay(TIMESLICE * 3);
         }
