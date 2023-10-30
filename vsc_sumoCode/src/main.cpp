@@ -1,6 +1,7 @@
 #include <Arduino.h>
 // #include <OLED_utils.hpp>
 #include <Configs.h>
+#include <Debug.h>
 #include <MK2System.hpp>
 #include <Vehicle_actions.hpp>
 #include <Vehicle_utils.hpp>
@@ -15,27 +16,29 @@
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, 1);
 
-void task_searching(MK2System::VehState &state)
+VehState g_state{};
+
+void task_searching()
 {
-    state.ultra_info = obj_detection_info();
+    g_state.ultra_info = obj_detection_info();
 }
 
-void task_qtr(MK2System::VehState &state)
+void task_qtr()
 {
-    state.edge_info = determine_edge(QTR_SENSOR_FL, QTR_SENSOR_FR, QTR_SENSOR_B);
+    g_state.edge_info = determine_edge(QTR_SENSOR_FL, QTR_SENSOR_FR, QTR_SENSOR_B);
 }
 
-void task_normal_attack(MK2System::VehState &state)
+void task_normal_attack()
 {
-    if (state.stage != MK2System::Stage::BATTLE)
+    if (g_state.stage != Stage::BATTLE)
         return;
 
     int search_distance = 40;
 
-    if (state.edge_info.hasValue())
+    if (g_state.edge_info.hasValue())
     {
-        state.motion = VehMotion::TURNING;
-        switch (state.edge_info.getValue())
+        g_state.motion = VehMotion::TURNING;
+        switch (g_state.edge_info.getValue())
         {
         case Edge_Signal::BACK:
             // TODO: maybe go random?
@@ -55,55 +58,55 @@ void task_normal_attack(MK2System::VehState &state)
         }
 
         delay(TIMESLICE);
-        state.speed = SPEED;
+        g_state.speed = SPEED;
     }
-    else if (is_obj_in_distance(state.ultra_info, search_distance))
+    else if (is_obj_in_distance(g_state.ultra_info, search_distance))
     {
-        state.motion = VehMotion::FORWARD;
+        g_state.motion = VehMotion::FORWARD;
 
         // calculation of the gap
-        // auto gap = abs(state.ultra_info.left_sensor.getValue() - state.ultra_info.left_sensor.getValue());
-        auto gap = calculate_gap(state.ultra_info);
+        // auto gap = abs(g_state.ultra_info.left_sensor.getValue() - g_state.ultra_info.left_sensor.getValue());
+        auto gap = calculate_gap(g_state.ultra_info);
 
-        if (is_adjusting_needed(state.ultra_info, gap))
+        if (is_adjusting_needed(g_state.ultra_info, gap))
         {
-            state.motion = VehMotion::ADJUST;
-            state.speed = car_adjust_attack_direction(state.ultra_info, SPEED);
+            g_state.motion = VehMotion::ADJUST;
+            g_state.speed = car_adjust_attack_direction(g_state.ultra_info, SPEED);
             delay(TIMESLICE * 3);
         }
         else
         {
             // attack strategy
-            if (is_obj_in_distance(state.ultra_info, 10))
+            if (is_obj_in_distance(g_state.ultra_info, 10))
             {
                 // attack_strategy(120, TIMESLICE * 10);
                 car_go_forward(255);
-                state.speed = 255;
+                g_state.speed = 255;
             }
-            else if (is_obj_in_distance(state.ultra_info, 20))
+            else if (is_obj_in_distance(g_state.ultra_info, 20))
             {
                 // attack_strategy(120, TIMESLICE * 10);
                 car_go_forward(155);
-                state.speed = 155;
+                g_state.speed = 155;
             }
             else
             {
                 car_go_forward(90);
-                state.speed = 90;
+                g_state.speed = 90;
                 delay(TIMESLICE * 3);
             }
         }
     }
     else
     {
-        state.motion = VehMotion::SEARCH;
-        search_strategy(state.search_strategy, search_distance, SPEED, 500);
+        g_state.motion = VehMotion::SEARCH;
+        search_strategy(g_state.search_strategy, search_distance, SPEED, 500);
         // car_go_forward(SPEED);
-        state.speed = SPEED;
+        g_state.speed = SPEED;
     }
 }
 
-void task_oled_display(MK2System::VehState &state)
+void task_oled_display()
 {
     display.clearDisplay();
     display.setTextSize(1);
@@ -111,12 +114,12 @@ void task_oled_display(MK2System::VehState &state)
     display.setCursor(0, 0);
     // Display static text
     display.print("stage: ");
-    switch (state.stage)
+    switch (g_state.stage)
     {
-    case MK2System::Stage::INIT:
+    case Stage::INIT:
         display.println("INIT");
         break;
-    case MK2System::Stage::BATTLE:
+    case Stage::BATTLE:
         display.println("Battle");
         break;
     default:
@@ -124,17 +127,17 @@ void task_oled_display(MK2System::VehState &state)
     }
 
     display.print("L: ");
-    display.println(state.ultra_info.left_sensor.getValue());
+    display.println(g_state.ultra_info.left_sensor.getValue());
     display.print("R: ");
-    display.println(state.ultra_info.right_sensor.getValue());
+    display.println(g_state.ultra_info.right_sensor.getValue());
 
     display.print("Speed: ");
-    display.println(state.speed);
+    display.println(g_state.speed);
 
     display.print("Edge: ");
-    if (state.edge_info.hasValue())
+    if (g_state.edge_info.hasValue())
     {
-        switch (state.edge_info.getValue())
+        switch (g_state.edge_info.getValue())
         {
         case Edge_Signal::BACK:
             display.println("Back");
@@ -159,7 +162,7 @@ void task_oled_display(MK2System::VehState &state)
 
     display.print("Motion: ");
 
-    switch (state.motion)
+    switch (g_state.motion)
     {
     case VehMotion::VOID:
         display.println("Void");
@@ -347,7 +350,7 @@ struct Test
         else
         {
             Test::oled_display("NOT MOVE");
-            Serial.println("NOT MOVE");
+            debug::serial_println("VehAction: NOT MOVE");
         }
 
         delay(delay_ms);
@@ -361,7 +364,7 @@ struct Test
 
 void loop()
 {
-    Serial.println("===============");
+    debug::serial_println("===============");
     Test::normal_mode();
     // attack_strategy(100, 100);
 
