@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <Configs.h>
 #include <Tools.hpp>
+#include <Debug.h>
 
 #include "Vehicle_utils.hpp"
 
@@ -195,9 +196,9 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
     int frontR = analogRead(qtr_sensor_front_right);
     int back = analogRead(qtr_sensor_back);
 
-    Serial.println(String("FL: ") + frontL);
-    Serial.println(String("FR: ") + frontR);
-    Serial.println(String("BK: ") + back);
+    debug::serial_println(String("QTR: FL,") + frontL);
+    debug::serial_println(String("QTR: FR,") + frontR);
+    debug::serial_println(String("QTR: BK") + back);
 
     // TODO: change back
     if (frontL <= QTR_THRESHOLD && frontR <= QTR_THRESHOLD)
@@ -206,7 +207,6 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
     }
     else if (frontL <= QTR_THRESHOLD)
     {
-
         return Maybe(Edge_Signal::FRONT_LEFT);
     }
     else if (frontR <= QTR_THRESHOLD)

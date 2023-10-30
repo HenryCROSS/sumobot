@@ -26,12 +26,12 @@
 #define QTR_THRESHOLD (650)
 // #define QTR_THRESHOLD (250)
 
-#define TEST_SPEED (75)
-#define SPEED (TEST_SPEED)
+#define SPEED (75)
 
 #define ROTATE_ONE_DEGREE_IN_MS (180.0 / 480.0) //in speed 75, not accurate
 
+#define MAX_TASKS (20)
 
-#define MAX_TASKS 20
+#define DEBUG (true)
 
 #endif // !_PIN_H_
