@@ -6,14 +6,32 @@
 #include <Vehicle_actions.hpp>
 #include <Vehicle_types.hpp>
 
+enum class Task_Type
+{
+    PREEMPTIVE,
+    COOPERATIVE,
+};
+
+using Task_Fn = void (*)(void);
+
+struct Task
+{
+    bool start;
+    int life; // -1 = forever or positive n times
+    Task_Fn fn;
+    Task_Type type;
+    uint64_t delay;
+    uint64_t interval;
+    uint64_t prev_time;
+};
+
 class MK2System
 {
 public:
-    using Task = void (*)(void);
-
     static void init();
     static void run();
-    static int register_task(const Task &task);
+    // return task id
+    static int register_task(Task_Fn fn, Task_Type type, int life, uint64_t delay = 0, uint64_t interval = 0);
 
 private:
     static Array<Task, MAX_TASKS> tasks;
