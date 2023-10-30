@@ -38,7 +38,6 @@ public:
 
 private:
     static Array<Task, MAX_TASKS> tasks;
-    static VehState state;
 };
 
 #endif
