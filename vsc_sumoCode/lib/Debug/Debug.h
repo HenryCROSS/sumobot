@@ -6,21 +6,33 @@
 
 namespace debug
 {
-    template<bool B = DEBUG>
-    void serial_println(const String& str){
-        if constexpr (B){
+    template <bool B = DEBUG>
+    void serial_println(const String &str)
+    {
+        if constexpr (B)
+        {
             Serial.println(str);
         }
     }
 
-    template<bool B = DEBUG>
-    void serial_print(const String& str){
-        if constexpr (B){
+    template <bool B = DEBUG>
+    void serial_print(const String &str)
+    {
+        if constexpr (B)
+        {
             Serial.print(str);
         }
     }
 
-} // namespace debug
+    template <bool B = DEBUG, typename Fn>
+    void debug_fn(Fn fn)
+    {
+        if constexpr (B)
+        {
+            fn();
+        }
+    }
 
+} // namespace debug
 
 #endif
