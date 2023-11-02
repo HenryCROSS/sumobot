@@ -30,8 +30,9 @@ void task_qtr()
 
 void task_normal_attack()
 {
-    if (g_state.stage != Stage::BATTLE)
-        return;
+    // it is useful when more than 1 mode
+    // if (g_state.stage != Stage::BATTLE)
+    //     return;
 
     int search_distance = 40;
 
