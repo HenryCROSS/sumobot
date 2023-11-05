@@ -367,6 +367,7 @@ void loop()
 {
     debug::serial_println("===============");
     Test::normal_mode();
+    Serial.println("????");
     // attack_strategy(100, 100);
 
     // car_turn_left_by_speed(SPEED, 0);

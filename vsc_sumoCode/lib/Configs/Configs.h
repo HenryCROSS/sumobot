@@ -32,6 +32,8 @@
 
 #define MAX_TASKS (20)
 
+#define MAX_QTR_SCAN_TIME (10)
+
 #define DEBUG (true)
 
 #endif // !_PIN_H_

@@ -192,13 +192,22 @@ Maybe<double> detect_obj_distance(uint8_t trigger_pin, uint8_t echo_pin)
 Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sensor_front_right,
                                   uint8_t qtr_sensor_back)
 {
-    int frontL = analogRead(qtr_sensor_front_left);
-    int frontR = analogRead(qtr_sensor_front_right);
-    int back = analogRead(qtr_sensor_back);
+    int frontL = 0;
+    int frontR = 0;
+    int back = 0;
 
-    debug::serial_println(String("QTR: FL,") + frontL);
-    debug::serial_println(String("QTR: FR,") + frontR);
-    debug::serial_println(String("QTR: BK,") + back);
+    for(int i = 0; i <= MAX_QTR_SCAN_TIME; i++){
+        frontL += analogRead(qtr_sensor_front_left);
+        frontR += analogRead(qtr_sensor_front_right);
+        back += analogRead(qtr_sensor_back);
+    }
+    frontL /= MAX_QTR_SCAN_TIME;
+    frontR /= MAX_QTR_SCAN_TIME;
+    back /= MAX_QTR_SCAN_TIME;
+
+    debug::serial_println(String("QTR avg: FL,") + frontL);
+    debug::serial_println(String("QTR avg: FR,") + frontR);
+    debug::serial_println(String("QTR avg: BK,") + back);
 
     // TODO: change back
     if (frontL <= QTR_THRESHOLD && frontR <= QTR_THRESHOLD)
