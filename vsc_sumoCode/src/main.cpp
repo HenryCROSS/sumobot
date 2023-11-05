@@ -389,9 +389,9 @@ struct Test
 void loop()
 {
     debug::serial_println("===============");
-    // Test::normal_mode();
+    Test::normal_mode();
 
-    Test::monitor_test_mode();
+    // Test::monitor_test_mode();
     // attack_strategy(100, 100);
 
     // car_turn_left_by_speed(SPEED, 0);
