@@ -45,6 +45,7 @@ enum class VehMotion
 
 struct VehState
 {
+    bool monitor_running;
     Stage stage;
     Strategy search_strategy;
     VehMotion motion;
@@ -55,6 +56,7 @@ struct VehState
 
     VehState()
     {
+        monitor_running = false;
         range = 0;
         speed = 0;
         stage = Stage::INIT;

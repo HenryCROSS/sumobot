@@ -208,23 +208,28 @@ void setup()
     MK2System::register_task(task_searching, Task_Type::PREEMPTIVE, -1);
     MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
     MK2System::register_task(task_normal_attack, Task_Type::PREEMPTIVE, -1);
-    // MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
 
-    // if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
-    // { // Address 0x3D for 128x64
-    //     Serial.println(F("SSD1306 allocation failed"));
-    //     for (;;)
-    //         ;
-    // }
-    delay(2000);
+    if (display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+    { // Address 0x3D for 128x64
+        MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
+        delay(2000);
 
-    // display.clearDisplay();
-    // display.setTextSize(2);
-    // display.setTextColor(WHITE);
-    // display.setCursor(0, 10);
-    // // Display static text
-    // display.println("CHARGE!!");
-    // display.display();
+        g_state.monitor_running = true;
+
+        display.clearDisplay();
+        display.setTextSize(2);
+        display.setTextColor(WHITE);
+        display.setCursor(0, 10);
+        // Display static text
+        display.println("CHARGE!!");
+        display.display();
+    }
+    else
+    {
+        Serial.println(F("SSD1306 allocation failed"));
+        delay(2000);
+    }
+
     delay(4000);
 }
 
@@ -357,6 +362,24 @@ struct Test
         delay(delay_ms);
     }
 
+    static void monitor_test_mode()
+    {
+        if (g_state.monitor_running)
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                display.clearDisplay();
+                display.setTextSize(2);
+                display.setTextColor(WHITE);
+                display.setCursor(0, 10);
+                // Display static text
+                display.println(i);
+                display.display();
+                delay(500);
+            }
+        }
+    }
+
     static void normal_mode()
     {
         MK2System::run();
@@ -366,8 +389,9 @@ struct Test
 void loop()
 {
     debug::serial_println("===============");
-    Test::normal_mode();
-    Serial.println("????");
+    // Test::normal_mode();
+
+    Test::monitor_test_mode();
     // attack_strategy(100, 100);
 
     // car_turn_left_by_speed(SPEED, 0);
