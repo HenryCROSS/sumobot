@@ -208,23 +208,23 @@ void setup()
     MK2System::register_task(task_searching, Task_Type::PREEMPTIVE, -1);
     MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
     MK2System::register_task(task_normal_attack, Task_Type::PREEMPTIVE, -1);
-    MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
+    // MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
 
-    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
-    { // Address 0x3D for 128x64
-        Serial.println(F("SSD1306 allocation failed"));
-        for (;;)
-            ;
-    }
+    // if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+    // { // Address 0x3D for 128x64
+    //     Serial.println(F("SSD1306 allocation failed"));
+    //     for (;;)
+    //         ;
+    // }
     delay(2000);
 
-    display.clearDisplay();
-    display.setTextSize(2);
-    display.setTextColor(WHITE);
-    display.setCursor(0, 10);
-    // Display static text
-    display.println("CHARGE!!");
-    display.display();
+    // display.clearDisplay();
+    // display.setTextSize(2);
+    // display.setTextColor(WHITE);
+    // display.setCursor(0, 10);
+    // // Display static text
+    // display.println("CHARGE!!");
+    // display.display();
     delay(4000);
 }
 
