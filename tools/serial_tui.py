@@ -15,6 +15,12 @@ import serial.tools.list_ports
 import re
 import time
 
+from enum import Flag
+
+class Stage(Flag):
+    STOP = 1
+    MONITOR = 2
+
 
 class GLOBAL:
     port = "COM3"
@@ -23,26 +29,30 @@ class GLOBAL:
     new_baudrate = 9600
     data = []
     is_running = True
-    restart = False
+    clear = False
     interval = 1/60
     monitoring_rate = 0.0001 # sec
     connection_success = True
+    stage = Stage.STOP
     
 
-def cmd_monitor_port():
+def monitor_port():
     while GLOBAL.is_running:
-        GLOBAL.restart = False
-        try:
-            with serial.Serial(GLOBAL.port, GLOBAL.baudrate, timeout= 1) as ser:
-                GLOBAL.connection_success = True
-                while not GLOBAL.restart and GLOBAL.is_running:
-                    line = ser.readline()
+        match GLOBAL.stage:
+            case Stage.MONITOR:
+                try:
+                    with serial.Serial(GLOBAL.port, GLOBAL.baudrate, timeout= 1) as ser:
+                        GLOBAL.connection_success = True
+                        while GLOBAL.stage is Stage.MONITOR and GLOBAL.is_running:
+                            line = ser.readline()
 
-                    GLOBAL.data.append(line.decode().rstrip())
-                    time.sleep(GLOBAL.monitoring_rate)
-        except:
-            GLOBAL.connection_success = False
-            time.sleep(1)
+                            GLOBAL.data.append(line.decode().rstrip())
+                            time.sleep(GLOBAL.monitoring_rate)
+                except:
+                    GLOBAL.connection_success = False
+                    time.sleep(1)
+            case Stage.STOP:
+                time.sleep(1)
 
 class OutputConsole(Static):    
     def compose(self) -> ComposeResult:
@@ -57,8 +67,6 @@ class OutputConsole(Static):
         log.clear()
 
 class TopPart(Static):
-    
-    
     def compose(self) -> ComposeResult:
         with Horizontal():
             with Horizontal(id="filterBar"):
@@ -66,7 +74,9 @@ class TopPart(Static):
             with Horizontal():
                 yield Input(placeholder="File: data.log", id="file")
                 yield Button("Save", id="save")
-                yield Button("Restart", id="restart")
+                yield Button("Start", id="start", variant="success")
+                yield Button("Stop", id="stop", variant="warning")
+                yield Button("Clear", id="clear", variant="error")
         
     def on_mount(self):
         self.styles.dock = "top"
@@ -74,7 +84,8 @@ class TopPart(Static):
         self.query_one("#file").styles.width = "50%"
         self.query_one("#filterBar").styles.width = "30%"
         
-        self.query_one("#filter")
+        self.update_styles = self.set_interval(GLOBAL.interval, self.update_style)
+            
         
         self.filter_content = ""
         self.file_name = ""
@@ -89,8 +100,14 @@ class TopPart(Static):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "save":
             self.save_file()
-        elif event.button.id == "restart":
-            GLOBAL.restart = True
+        elif event.button.id == "start":
+            self.add_class("started")
+            GLOBAL.stage = Stage.MONITOR
+        elif event.button.id == "stop":
+            self.remove_class("started")
+            GLOBAL.stage = Stage.STOP
+        elif event.button.id == "clear":
+            GLOBAL.clear = True
         
     def get_filter_content(self) -> str:
         return self.filter_content
@@ -106,6 +123,17 @@ class TopPart(Static):
             output_lines = filter(lambda line: pattern == "" or re.search(pattern, line) is not None, GLOBAL.data)
             output_lines = map(lambda line: line + "\n", output_lines)
             file.writelines(output_lines)
+    
+    def update_style(self):
+        start = self.query_one("#start")
+        stop = self.query_one("#stop")
+        
+        if(self.has_class("started")):
+            start.styles.display = "none"
+            stop.styles.display = "block"
+        else:
+            stop.styles.display = "none"
+            start.styles.display = "block"
         
 
 class BottomPart(Static):
@@ -140,6 +168,7 @@ class MainPage(Static):
     def on_mount(self):
         self.update_filter_content = self.set_interval(GLOBAL.interval, self.get_filter_content)
         self.update_log = self.set_interval(GLOBAL.interval, self.update_log)
+        self.update_setting = self.set_interval(GLOBAL.interval, self.update_settings)
         
         self.state = {
             "filter_content": "",
@@ -148,14 +177,14 @@ class MainPage(Static):
         }
         
     def update_log(self):
-        if GLOBAL.restart:
+        if GLOBAL.clear:
+            GLOBAL.clear = False
             self.state["log_line"] = 0
             self.query_one(BottomPart).clear_nonfiltered_log()
             self.query_one(BottomPart).clear_filtered_log()
             
             GLOBAL.data.clear()
-            GLOBAL.baudrate = GLOBAL.new_baudrate
-            GLOBAL.port = GLOBAL.new_port
+            
         
         length = len(GLOBAL.data)
         while self.state["log_line"] < length:
@@ -168,6 +197,10 @@ class MainPage(Static):
             if (pattern == "" or re.search(pattern, line) is not None):
                 self.query_one(BottomPart).write_filtered_log(line)
                 
+    def update_settings(self):
+        if GLOBAL.stage is Stage.STOP:
+            GLOBAL.baudrate = GLOBAL.new_baudrate
+            GLOBAL.port = GLOBAL.new_port
         
     def get_filter_content(self):
         new_content = self.query_one(TopPart).get_filter_content()
@@ -234,19 +267,21 @@ class ContentSwitcherApp(App[None]):
     
     def update_header(self):
         title = f"port: {GLOBAL.port} | baudrate: {GLOBAL.baudrate}"
-        if GLOBAL.new_port != GLOBAL.port or GLOBAL.new_baudrate != GLOBAL.baudrate:
-            title = f"port: {GLOBAL.port} -> {GLOBAL.new_port} | baudrate: {GLOBAL.baudrate} -> {GLOBAL.new_baudrate} | need to restart"
+        if GLOBAL.stage is Stage.MONITOR and (GLOBAL.new_port != GLOBAL.port or GLOBAL.new_baudrate != GLOBAL.baudrate):
+            title = f"port: {GLOBAL.port} -> {GLOBAL.new_port} | baudrate: {GLOBAL.baudrate} -> {GLOBAL.new_baudrate} | need to stop first"
         self.app.screen.title = title
         
-        if GLOBAL.connection_success:
-            self.app.screen.sub_title = ""
-        else:
+        if not GLOBAL.connection_success:
             self.app.screen.sub_title = "[Connection Failed]"
+        elif GLOBAL.stage is Stage.MONITOR:
+            self.app.screen.sub_title = "[Monitoring]"
+        elif GLOBAL.stage is Stage.STOP:
+            self.app.screen.sub_title = "[Stop]"
     
 
 if __name__ == "__main__":
     # start a thread
-    handle = threading.Thread(group=None, target=cmd_monitor_port)
+    handle = threading.Thread(group=None, target=monitor_port)
     handle.start()
     
     ContentSwitcherApp().run()
