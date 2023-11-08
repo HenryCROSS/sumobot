@@ -1,6 +1,8 @@
 #ifndef _TYPES_HPP_
 #define _TYPES_HPP_
 
+#include <types.hpp>
+
 #include <Arduino.h>
 #include <Configs.h>
 #include <string.h>
