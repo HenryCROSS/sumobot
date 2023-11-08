@@ -24,6 +24,12 @@ struct is_same<_Tp, _Tp> : public true_type
 {
 };
 
+/**
+ * Usage:
+ * if(is_same_v<int, int>) // true
+ * 
+ * if(is_same_v<int, double>) // false
+*/
 template< class T, class U >
 inline constexpr bool is_same_v = is_same<T, U>::value;
 
