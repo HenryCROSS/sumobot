@@ -35,12 +35,41 @@ public:
         return Maybe();
     }
 
+    // map::(a -> b) -> M b
     template <typename Fn>
     auto map(Fn f) -> Maybe<decltype(f(value))>
     {
         if (!isJust)
         {
             return Maybe<decltype(f(value))>::Nothing();
+        }
+        else
+        {
+            return Maybe<decltype(f(value))>(f(value));
+        }
+    }
+
+    // map_or::(a -> b) -> b -> M b
+    template <typename Fn>
+    auto map_or(Fn f, decltype(f(value)) default_val) -> Maybe<decltype(f(value))>
+    {
+        if (!isJust)
+        {
+            return Maybe<decltype(f(value))>(default_val);
+        }
+        else
+        {
+            return Maybe<decltype(f(value))>(f(value));
+        }
+    }
+
+    // map_or_else::(a -> b) -> (() -> b) -> M b
+    template <typename Fn, typename ElseFn>
+    auto map_or_else(Fn f, ElseFn else_f) -> Maybe<decltype(f(val))>
+    {
+        if (!isJust)
+        {
+            return Maybe<decltype(f(value))>(else_f());
         }
         else
         {
@@ -58,6 +87,11 @@ public:
         {
             return value;
         }
+    }
+
+    T unwrap_unchecked()
+    {
+        return val;
     }
 };
 
