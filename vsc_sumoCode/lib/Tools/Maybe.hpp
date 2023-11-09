@@ -1,0 +1,64 @@
+#ifndef _MAYBE_HPP_
+#define _MAYBE_HPP_
+
+template <typename T>
+class Maybe
+{
+private:
+    bool isJust;
+    T value;
+
+public:
+    Maybe()
+        : isJust(false), value() {}
+
+    explicit Maybe(T val)
+        : isJust(true), value(val) {}
+
+    bool hasValue() const
+    {
+        return isJust;
+    }
+
+    // call this after call hasValue()
+    T getValue() const
+    {
+        if (!isJust)
+        {
+            return T();
+        }
+        return value;
+    }
+
+    static Maybe Nothing()
+    {
+        return Maybe();
+    }
+
+    template <typename Fn>
+    auto map(Fn f) -> Maybe<decltype(f(value))>
+    {
+        if (!isJust)
+        {
+            return Maybe<decltype(f(value))>::Nothing();
+        }
+        else
+        {
+            return Maybe<decltype(f(value))>(f(value));
+        }
+    }
+
+    T unwrap_or_default(T default_val)
+    {
+        if (!isJust)
+        {
+            return default_val;
+        }
+        else
+        {
+            return value;
+        }
+    }
+};
+
+#endif // !_MAYBE_HPP_

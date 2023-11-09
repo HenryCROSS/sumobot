@@ -2,6 +2,7 @@
 #define _TYPES_HPP_
 
 #include <types.hpp>
+#include <Maybe.hpp>
 
 #include <Arduino.h>
 #include <Configs.h>
@@ -207,40 +208,6 @@ private:
     }
 };
 
-template <typename T>
-class Maybe
-{
-private:
-    bool isJust;
-    T value;
-
-public:
-    Maybe()
-        : isJust(false) {}
-
-    explicit Maybe(T val)
-        : isJust(true), value(val) {}
-
-    bool hasValue() const
-    {
-        return isJust;
-    }
-
-    // call this after call hasValue()
-    T getValue() const
-    {
-        if (!isJust)
-        {
-            return T();
-        }
-        return value;
-    }
-
-    static Maybe Nothing()
-    {
-        return Maybe();
-    }
-};
 
 // testing
 template <typename L, typename R>
