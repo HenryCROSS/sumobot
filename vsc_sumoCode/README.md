@@ -1,6 +1,6 @@
 # 项目介绍
 
-这代码是用于我们的第二台小车的，平台是Arduion，单片机是Arduino nano
+这代码是用于我们的第二台小车的，平台是atmelavr，单片机是Arduino nano，bootloader是nanoatmega328new
 
 ## 项目工具
 - C++ 17
