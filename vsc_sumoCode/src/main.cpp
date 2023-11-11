@@ -209,22 +209,22 @@ void setup()
     MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
     MK2System::register_task(task_normal_attack, Task_Type::PREEMPTIVE, -1);
 
-    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
-    {
-        Serial.println(F("SSD1306 allocation failed"));
-        for (;;)
-            ;
-    }
+    // if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+    // {
+    //     Serial.println(F("SSD1306 allocation failed"));
+    //     for (;;)
+    //         ;
+    // }
 
-    delay(2000);
-    display.clearDisplay();
+    // delay(2000);
+    // display.clearDisplay();
 
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(0, 10);
-    // Display static text
-    display.println("Hello, world!");
-    display.display();
+    // display.setTextSize(1);
+    // display.setTextColor(WHITE);
+    // display.setCursor(0, 10);
+    // // Display static text
+    // display.println("Hello, world!");
+    // display.display();
 
     // MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
     // if (display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
@@ -247,7 +247,9 @@ void setup()
     //     delay(2000);
     // }
 
-    delay(4000);
+    // delay(4000);
+
+    delay(1000);
 }
 
 struct Test
@@ -405,8 +407,8 @@ struct Test
 
 void loop()
 {
-    debug::serial_println("===============");
-    Test::normal_mode();
+    // debug::serial_println("===============");
+    // Test::normal_mode();
 
     // Test::monitor_test_mode();
     // attack_strategy(100, 100);
@@ -416,4 +418,38 @@ void loop()
 
     // car_stop();
     // delay(1000);
+
+    byte error, address;
+    int nDevices;
+    Serial.println("Scanning...");
+    nDevices = 0;
+    for (address = 1; address < 127; address++)
+    {
+        // The i2c_scanner uses the return value of
+        // the Write.endTransmisstion to see if
+        // a device did acknowledge to the address.
+        Wire.beginTransmission(address);
+        error = Wire.endTransmission();
+        if (error == 0)
+        {
+            Serial.print("I2C device found at address 0x");
+            if (address < 16)
+                Serial.print("0");
+            Serial.print(address, HEX);
+            Serial.println(" !");
+            nDevices++;
+        }
+        else if (error == 4)
+        {
+            Serial.print("Unknow error at address 0x");
+            if (address < 16)
+                Serial.print("0");
+            Serial.println(address, HEX);
+        }
+    }
+    if (nDevices == 0)
+        Serial.println("No I2C devices found\n");
+    else
+        Serial.println("done\n");
+    delay(5000); // wait 5 seconds for next scan
 }
