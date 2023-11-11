@@ -65,7 +65,7 @@ public:
 
     // map_or_else::(a -> b) -> (() -> b) -> M b
     template <typename Fn, typename ElseFn>
-    auto map_or_else(Fn f, ElseFn else_f) -> Maybe<decltype(f(val))>
+    auto map_or_else(Fn f, ElseFn else_f) -> Maybe<decltype(f(value))>
     {
         if (!isJust)
         {
@@ -91,7 +91,7 @@ public:
 
     T unwrap_unchecked()
     {
-        return val;
+        return value;
     }
 };
 
