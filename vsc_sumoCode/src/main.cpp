@@ -235,16 +235,16 @@ void setup()
     pinMode(LEFT_MOTOR, OUTPUT);
     pinMode(RIGHT_MOTOR, OUTPUT);
 
-    pinMode(1, INPUT_PULLUP);
     pinMode(2, INPUT_PULLUP);
+    pinMode(3, INPUT_PULLUP);
 
     MK2System::init();
     MK2System::register_task(task_searching, Task_Type::PREEMPTIVE, -1);
     // MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
     MK2System::register_task(task_normal_attack, Task_Type::PREEMPTIVE, -1);
 
-    attachInterrupt(digitalPinToInterrupt(1), qtr_left_interrupt, RISING);
-    attachInterrupt(digitalPinToInterrupt(2), qtr_right_interrupt, RISING);
+    attachInterrupt(digitalPinToInterrupt(2), qtr_left_interrupt, RISING);
+    attachInterrupt(digitalPinToInterrupt(3), qtr_right_interrupt, RISING);
 
     if (display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
     { // Address 0x3D for 128x64
