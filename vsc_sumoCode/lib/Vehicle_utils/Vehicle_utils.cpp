@@ -278,7 +278,7 @@ double calculate_gap(Obj_direction info)
         auto lv = info.left_sensor.getValue();
         auto rv = info.right_sensor.getValue();
         // TODO: need an algorithm
-        double x = 1;
+        double x = 10;
 
         return x;
     }
