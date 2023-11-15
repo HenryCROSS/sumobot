@@ -44,15 +44,19 @@ void task_normal_attack()
         case Edge_Signal::BACK:
             // TODO: maybe go random?
             car_go_forward(SPEED);
+            debug::serial_println("Detect edge BACK");
             break;
         case Edge_Signal::FRONT:
             car_turn_left_by_speed(SPEED, SPEED);
+            debug::serial_println("Detect edge FRONT");
             break;
         case Edge_Signal::FRONT_LEFT:
             car_turn_left_by_speed(SPEED, SPEED);
+            debug::serial_println("Detect edge FRONT Left");
             break;
         case Edge_Signal::FRONT_RIGHT:
             car_turn_right_by_speed(SPEED, SPEED);
+            debug::serial_println("Detect edge FRONT right");
             break;
         default:
             break;
@@ -74,6 +78,7 @@ void task_normal_attack()
             g_state.motion = VehMotion::ADJUST;
             g_state.speed = car_adjust_attack_direction(g_state.ultra_info, SPEED);
             delay(TIMESLICE * 3);
+            debug::serial_println("over +- 3, adjust");
         }
         else
         {
@@ -83,24 +88,28 @@ void task_normal_attack()
                 // attack_strategy(120, TIMESLICE * 10);
                 car_go_forward(255);
                 g_state.speed = 255;
+            debug::serial_println("within 10, attack");
             }
             else if (is_obj_in_distance(g_state.ultra_info, 20))
             {
                 // attack_strategy(120, TIMESLICE * 10);
                 car_go_forward(155);
                 g_state.speed = 155;
+            debug::serial_println("within 20, attack");
             }
             else
             {
                 car_go_forward(90);
                 g_state.speed = 90;
                 delay(TIMESLICE * 3);
+            debug::serial_println("within 40, attack");
             }
         }
     }
     else
     {
         g_state.motion = VehMotion::SEARCH;
+        debug::serial_println("searching for 0.5s");
         search_strategy(g_state.search_strategy, search_distance, SPEED, 500);
         // car_go_forward(SPEED);
         g_state.speed = SPEED;
