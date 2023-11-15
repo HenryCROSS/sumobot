@@ -17,6 +17,15 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, 1);
 
 VehState g_state{};
+volatile bool front_left = false;
+volatile bool front_right = false;
+
+void qtr_left_interrupt(){
+    front_left = true;
+}
+void qtr_right_interrupt(){
+    front_right = true;
+}
 
 void task_searching()
 {
@@ -28,6 +37,10 @@ void task_qtr()
     g_state.edge_info = determine_edge(QTR_SENSOR_FL, QTR_SENSOR_FR, QTR_SENSOR_B);
 }
 
+void task_edge_action(){
+
+}
+
 void task_normal_attack()
 {
     // it is useful when more than 1 mode
@@ -36,29 +49,47 @@ void task_normal_attack()
 
     int search_distance = 40;
 
-    if (g_state.edge_info.hasValue())
+    if (front_left || front_right ||  g_state.edge_info.hasValue())
     {
         g_state.motion = VehMotion::TURNING;
-        switch (g_state.edge_info.getValue())
-        {
-        case Edge_Signal::BACK:
-            // TODO: maybe go random?
+        // switch (g_state.edge_info.getValue())
+        // {
+        // case Edge_Signal::BACK:
+        //     // TODO: maybe go random?
+        //     car_go_forward(SPEED);
+        //     break;
+        // case Edge_Signal::FRONT:
+        //     car_turn_left_by_speed(SPEED, SPEED);
+        //     break;
+        // case Edge_Signal::FRONT_LEFT:
+        //     car_turn_left_by_speed(SPEED, SPEED);
+        //     break;
+        // case Edge_Signal::FRONT_RIGHT:
+        //     car_turn_right_by_speed(SPEED, SPEED);
+        //     break;
+        // default:
+        //     break;
+        // }
+        
+        if(front_left && front_right){
+            car_go_backward(SPEED);
+            delay(200);
+            car_turn_left_by_speed(SPEED, SPEED);
+            delay(200);
+        }else if (front_left){
+            car_turn_left(SPEED);
+            delay(200);
+        }else if (front_right){
+            car_turn_right(SPEED);
+            delay(200);
+        }else {
             car_go_forward(SPEED);
-            break;
-        case Edge_Signal::FRONT:
-            car_turn_left_by_speed(SPEED, SPEED);
-            break;
-        case Edge_Signal::FRONT_LEFT:
-            car_turn_left_by_speed(SPEED, SPEED);
-            break;
-        case Edge_Signal::FRONT_RIGHT:
-            car_turn_right_by_speed(SPEED, SPEED);
-            break;
-        default:
-            break;
+            delay(200);
         }
 
-        delay(TIMESLICE);
+        front_left = false;
+        front_right = false;
+
         g_state.speed = SPEED;
     }
     else if (is_obj_in_distance(g_state.ultra_info, search_distance))
@@ -204,10 +235,16 @@ void setup()
     pinMode(LEFT_MOTOR, OUTPUT);
     pinMode(RIGHT_MOTOR, OUTPUT);
 
+    pinMode(1, INPUT_PULLUP);
+    pinMode(2, INPUT_PULLUP);
+
     MK2System::init();
     MK2System::register_task(task_searching, Task_Type::PREEMPTIVE, -1);
-    MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
+    // MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
     MK2System::register_task(task_normal_attack, Task_Type::PREEMPTIVE, -1);
+
+    attachInterrupt(digitalPinToInterrupt(1), qtr_left_interrupt, RISING);
+    attachInterrupt(digitalPinToInterrupt(2), qtr_right_interrupt, RISING);
 
     if (display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
     { // Address 0x3D for 128x64
