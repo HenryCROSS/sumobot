@@ -71,7 +71,8 @@ void task_normal_attack()
 
         // calculation of the gap
         // auto gap = abs(g_state.ultra_info.left_sensor.getValue() - g_state.ultra_info.left_sensor.getValue());
-        auto gap = calculate_gap(g_state.ultra_info);
+        // auto gap = calculate_gap(g_state.ultra_info);
+        auto gap = 3;
 
         if (is_adjusting_needed(g_state.ultra_info, gap))
         {
@@ -109,8 +110,9 @@ void task_normal_attack()
     else
     {
         g_state.motion = VehMotion::SEARCH;
-        debug::serial_println("searching for 0.5s");
-        search_strategy(g_state.search_strategy, search_distance, SPEED, 500);
+        debug::serial_println("searching");
+        car_turn_left(SPEED);
+        // search_strategy(g_state.search_strategy, search_distance, SPEED, 500);
         // car_go_forward(SPEED);
         g_state.speed = SPEED;
     }
