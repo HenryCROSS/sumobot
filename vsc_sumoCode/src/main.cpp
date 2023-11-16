@@ -62,7 +62,7 @@ void task_normal_attack()
             break;
         }
 
-        delay(TIMESLICE * 20);
+        delay(TIMESLICE * 40);
         g_state.speed = SPEED;
     }
     else if (is_obj_in_distance(g_state.ultra_info, search_distance))
