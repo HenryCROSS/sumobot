@@ -211,11 +211,6 @@ void setup()
     pinMode(LEFT_MOTOR, OUTPUT);
     pinMode(RIGHT_MOTOR, OUTPUT);
 
-    MK2System::init();
-    MK2System::register_task(task_searching, Task_Type::PREEMPTIVE, -1);
-    MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
-    MK2System::register_task(task_normal_attack, Task_Type::PREEMPTIVE, -1);
-
     // if (display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
     // { // Address 0x3D for 128x64
     //     delay(2000);
@@ -246,6 +241,10 @@ void setup()
     }
     delay(2000);
 
+    MK2System::init();
+    MK2System::register_task(task_searching, Task_Type::PREEMPTIVE, -1);
+    MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
+    MK2System::register_task(task_normal_attack, Task_Type::PREEMPTIVE, -1);
     MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
 
     display.clearDisplay();
