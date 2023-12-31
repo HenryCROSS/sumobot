@@ -222,7 +222,6 @@ void setup()
 
     // if (display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
     // { // Address 0x3D for 128x64
-    //     MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
     //     delay(2000);
 
     //     g_state.monitor_running = true;
@@ -250,13 +249,16 @@ void setup()
             ;
     }
     delay(2000);
+
+    MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
+    
     display.clearDisplay();
 
     display.setTextSize(1);
     display.setTextColor(WHITE);
     display.setCursor(0, 10);
     // Display static text
-    display.println("Hello, world!");
+    display.println("CHARGE!");
     display.display();
 }
 
@@ -415,8 +417,8 @@ struct Test
 
 void loop()
 {
-    // debug::serial_println("===============");
-    // Test::normal_mode();
+    debug::serial_println("===============");
+    Test::normal_mode();
 
     // Test::monitor_test_mode();
     // attack_strategy(100, 100);
