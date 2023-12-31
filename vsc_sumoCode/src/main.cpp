@@ -241,12 +241,6 @@ void setup()
     }
     delay(2000);
 
-    MK2System::init();
-    MK2System::register_task(task_searching, Task_Type::PREEMPTIVE, -1);
-    MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
-    MK2System::register_task(task_normal_attack, Task_Type::PREEMPTIVE, -1);
-    MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
-
     display.clearDisplay();
 
     display.setTextSize(1);
@@ -255,6 +249,13 @@ void setup()
     // Display static text
     display.println("CHARGE!");
     display.display();
+
+
+    MK2System::init();
+    MK2System::register_task(task_searching, Task_Type::PREEMPTIVE, -1);
+    MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
+    MK2System::register_task(task_normal_attack, Task_Type::PREEMPTIVE, -1);
+    MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
 }
 
 struct Test
