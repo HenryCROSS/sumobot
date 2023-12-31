@@ -89,21 +89,21 @@ void task_normal_attack()
                 // attack_strategy(120, TIMESLICE * 10);
                 car_go_forward(255);
                 g_state.speed = 255;
-            debug::serial_println("within 10, attack");
+                debug::serial_println("within 10, attack");
             }
             else if (is_obj_in_distance(g_state.ultra_info, 20))
             {
                 // attack_strategy(120, TIMESLICE * 10);
                 car_go_forward(155);
                 g_state.speed = 155;
-            debug::serial_println("within 20, attack");
+                debug::serial_println("within 20, attack");
             }
             else
             {
                 car_go_forward(90);
                 g_state.speed = 90;
                 delay(TIMESLICE * 3);
-            debug::serial_println("within 40, attack");
+                debug::serial_println("within 40, attack");
             }
         }
     }
@@ -220,26 +220,42 @@ void setup()
     MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
     MK2System::register_task(task_normal_attack, Task_Type::PREEMPTIVE, -1);
 
-    if (display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+    // if (display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+    // { // Address 0x3D for 128x64
+    //     // MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
+    //     delay(2000);
+
+    //     g_state.monitor_running = true;
+
+    //     display.clearDisplay();
+    //     display.setTextSize(2);
+    //     display.setTextColor(WHITE);
+    //     display.setCursor(0, 10);
+    //     // Display static text
+    //     display.println("CHARGE!!");
+    //     display.display();
+    // }
+    // else
+    // {
+    //     Serial.println(F("SSD1306 allocation failed"));
+    //     delay(2000);
+    // }
+
+    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
     { // Address 0x3D for 128x64
-        // MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
-        delay(2000);
-
-        g_state.monitor_running = true;
-
-        display.clearDisplay();
-        display.setTextSize(2);
-        display.setTextColor(WHITE);
-        display.setCursor(0, 10);
-        // Display static text
-        display.println("CHARGE!!");
-        display.display();
-    }
-    else
-    {
         Serial.println(F("SSD1306 allocation failed"));
-        delay(2000);
+        for (;;)
+            ;
     }
+    delay(2000);
+    display.clearDisplay();
+
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 10);
+    // Display static text
+    display.println("CHARGE!");
+    display.display();
 
     delay(4000);
 }
