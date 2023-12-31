@@ -139,18 +139,17 @@ int car_adjust_attack_direction(Obj_direction info, int speed)
         auto result = car_adjustment_measurement(info.left_sensor.getValue(), info.right_sensor.getValue());
         // double factor = (abs(result.snd) - tolerance) / result.snd;
 
-        //double factor = curve_algorithm(1);
-        double factor =1;
+        // double factor = curve_algorithm(1);
+        double factor = 1;
         actual_speed = speed * factor;
-        
 
         switch (result.fst)
         {
         case OP_Vehicle::GO_LEFT:
-            car_turn_left_by_speed(actual_speed,actual_speed);
+            car_turn_left_by_speed(actual_speed, actual_speed);
             break;
         case OP_Vehicle::GO_RIGHT:
-            car_turn_right_by_speed(actual_speed,actual_speed);
+            car_turn_right_by_speed(actual_speed, actual_speed);
             break;
         default:
             break;
@@ -159,17 +158,17 @@ int car_adjust_attack_direction(Obj_direction info, int speed)
     }
     else if (info.left_sensor.hasValue())
     {
-        //double factor = curve_algorithm(1);
+        // double factor = curve_algorithm(1);
         double factor = 1;
         actual_speed = speed * factor;
-        car_turn_left_by_speed(actual_speed,actual_speed);
+        car_turn_left_by_speed(actual_speed, actual_speed);
     }
     else if (info.right_sensor.hasValue())
     {
-        //double factor = curve_algorithm(1);
+        // double factor = curve_algorithm(1);
         double factor = 1;
         actual_speed = speed * factor;
-        car_turn_right_by_speed(actual_speed,actual_speed);
+        car_turn_right_by_speed(actual_speed, actual_speed);
     }
 
     return actual_speed;
@@ -190,7 +189,7 @@ Maybe<double> detect_obj_distance(uint8_t trigger_pin, uint8_t echo_pin)
     digitalWrite(trigger_pin, LOW);
 
     auto val = pulseIn(echo_pin, HIGH, MAX_DISTANCE * 58) / 58.0;
-    return val != 0? Maybe(val): Maybe<double>::Nothing();
+    return val != 0 ? Maybe(val) : Maybe<double>::Nothing();
 }
 
 Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sensor_front_right,
@@ -200,7 +199,8 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
     int frontR = 0;
     int back = 0;
 
-    for(int i = 0; i <= MAX_QTR_SCAN_TIME; i++){
+    for (int i = 0; i <= MAX_QTR_SCAN_TIME; i++)
+    {
         frontL += analogRead(qtr_sensor_front_left);
         frontR += analogRead(qtr_sensor_front_right);
         back += analogRead(qtr_sensor_back);
@@ -209,9 +209,9 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
     frontR /= MAX_QTR_SCAN_TIME;
     back /= MAX_QTR_SCAN_TIME;
 
-    Serial.println(( String(frontL)).c_str());
-    Serial.println(( String(frontR)).c_str());
-    Serial.println(( String(back)).c_str());
+    Serial.println((String(frontL)).c_str());
+    Serial.println((String(frontR)).c_str());
+    Serial.println((String(back)).c_str());
 
     // TODO: change back
     if (frontL <= QTR_THRESHOLD && frontR <= QTR_THRESHOLD)

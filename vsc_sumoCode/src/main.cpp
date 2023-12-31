@@ -67,7 +67,7 @@ void task_normal_attack()
         // calculation of the gap
         // auto gap = abs(g_state.ultra_info.left_sensor.getValue() - g_state.ultra_info.left_sensor.getValue());
         // auto gap = calculate_gap(g_state.ultra_info);
-        //auto gap = 30;
+        // auto gap = 30;
 
         // if (is_adjusting_needed(g_state.ultra_info, gap))
         // {
@@ -429,5 +429,5 @@ void loop()
     // delay(480);
 
     // car_stop();
-    delay(1000);
+    // delay(1000);
 }
