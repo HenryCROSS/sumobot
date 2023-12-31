@@ -205,7 +205,7 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
     frontR /= MAX_QTR_SCAN_TIME;
     back /= MAX_QTR_SCAN_TIME;
 
-    debug::serial_println(String(0));
+    debug::serial_println(String("aaaa")+String(0));
     debug::serial_println(String(0));
     debug::serial_println(String(0));
 
