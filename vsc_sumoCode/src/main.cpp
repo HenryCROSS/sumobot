@@ -30,37 +30,37 @@ void task_qtr()
 
 void task_normal_attack()
 {
-    int search_distance = 40;
+    // int search_distance = 40;
 
-    if (g_state.edge_info.hasValue())
-    {
-        g_state.motion = VehMotion::TURNING;
-        switch (g_state.edge_info.getValue())
-        {
-        case Edge_Signal::BACK:
-            // TODO: maybe go random?
-            car_go_forward(SPEED);
-            debug::serial_println("Detect edge BACK");
-            break;
-        case Edge_Signal::FRONT:
-            car_turn_left_by_speed(SPEED, SPEED);
-            debug::serial_println("Detect edge FRONT");
-            break;
-        case Edge_Signal::FRONT_LEFT:
-            car_turn_left_by_speed(SPEED, SPEED);
-            debug::serial_println("Detect edge FRONT Left");
-            break;
-        case Edge_Signal::FRONT_RIGHT:
-            car_turn_right_by_speed(SPEED, SPEED);
-            debug::serial_println("Detect edge FRONT right");
-            break;
-        default:
-            break;
-        }
+    // if (g_state.edge_info.hasValue())
+    // {
+    //     g_state.motion = VehMotion::TURNING;
+    //     switch (g_state.edge_info.getValue())
+    //     {
+    //     case Edge_Signal::BACK:
+    //         // TODO: maybe go random?
+    //         car_go_forward(SPEED);
+    //         debug::serial_println("Detect edge BACK");
+    //         break;
+    //     case Edge_Signal::FRONT:
+    //         car_turn_left_by_speed(SPEED, SPEED);
+    //         debug::serial_println("Detect edge FRONT");
+    //         break;
+    //     case Edge_Signal::FRONT_LEFT:
+    //         car_turn_left_by_speed(SPEED, SPEED);
+    //         debug::serial_println("Detect edge FRONT Left");
+    //         break;
+    //     case Edge_Signal::FRONT_RIGHT:
+    //         car_turn_right_by_speed(SPEED, SPEED);
+    //         debug::serial_println("Detect edge FRONT right");
+    //         break;
+    //     default:
+    //         break;
+    //     }
 
-        delay(TIMESLICE * 40);
-        g_state.speed = SPEED;
-    }
+    //     delay(TIMESLICE * 40);
+    //     g_state.speed = SPEED;
+    // }
     // else if (is_obj_in_distance(g_state.ultra_info, search_distance))
     // {
     //     // calculation of the gap
