@@ -107,9 +107,9 @@ void task_normal_attack()
     {
         g_state.motion = VehMotion::SEARCH; // OK
         // debug::serial_println("searching"); // TODO: Change
-        car_turn_left(SPEED); // OK
-        // search_strategy(g_state.search_strategy, search_distance, SPEED, 500); // TODO: Change
-        car_go_forward(SPEED); // OK
+        // car_turn_left(SPEED); // OK
+        search_strategy(g_state.search_strategy, search_distance, 50, 500); // TODO: Change
+        // car_go_forward(SPEED); // OK
         g_state.speed = SPEED; // OK
     }
 }
