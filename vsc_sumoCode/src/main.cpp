@@ -116,84 +116,84 @@ void task_normal_attack()
 
 void task_oled_display()
 {
-    // display.clearDisplay();
-    // display.setTextSize(1);
-    // display.setTextColor(WHITE);
-    // display.setCursor(0, 0);
-    // // Display static text
-    // display.print("stage: ");
-    // switch (g_state.stage)
-    // {
-    // case Stage::INIT:
-    //     display.println("INIT");
-    //     break;
-    // case Stage::BATTLE:
-    //     display.println("Battle");
-    //     break;
-    // default:
-    //     break;
-    // }
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 0);
+    // Display static text
+    display.print("stage: ");
+    switch (g_state.stage)
+    {
+    case Stage::INIT:
+        display.println("INIT");
+        break;
+    case Stage::BATTLE:
+        display.println("Battle");
+        break;
+    default:
+        break;
+    }
 
-    // display.print("L: ");
-    // display.println(g_state.ultra_info.left_sensor.getValue());
-    // display.print("R: ");
-    // display.println(g_state.ultra_info.right_sensor.getValue());
+    display.print("L: ");
+    display.println(g_state.ultra_info.left_sensor.getValue());
+    display.print("R: ");
+    display.println(g_state.ultra_info.right_sensor.getValue());
 
-    // display.print("Speed: ");
-    // display.println(g_state.speed);
+    display.print("Speed: ");
+    display.println(g_state.speed);
 
-    // display.print("Edge: ");
-    // if (g_state.edge_info.hasValue())
-    // {
-    //     switch (g_state.edge_info.getValue())
-    //     {
-    //     case Edge_Signal::BACK:
-    //         display.println("Back");
-    //         break;
-    //     case Edge_Signal::FRONT:
-    //         display.println("Front");
-    //         break;
-    //     case Edge_Signal::FRONT_LEFT:
-    //         display.println("Front Left");
-    //         break;
-    //     case Edge_Signal::FRONT_RIGHT:
-    //         display.println("Front Right");
-    //         break;
-    //     default:
-    //         break;
-    //     }
-    // }
-    // else
-    // {
-    //     display.println("Void");
-    // }
+    display.print("Edge: ");
+    if (g_state.edge_info.hasValue())
+    {
+        switch (g_state.edge_info.getValue())
+        {
+        case Edge_Signal::BACK:
+            display.println("Back");
+            break;
+        case Edge_Signal::FRONT:
+            display.println("Front");
+            break;
+        case Edge_Signal::FRONT_LEFT:
+            display.println("Front Left");
+            break;
+        case Edge_Signal::FRONT_RIGHT:
+            display.println("Front Right");
+            break;
+        default:
+            break;
+        }
+    }
+    else
+    {
+        display.println("Void");
+    }
 
-    // display.print("Motion: ");
+    display.print("Motion: ");
 
-    // switch (g_state.motion)
-    // {
-    // case VehMotion::VOID:
-    //     display.println("Void");
-    //     break;
-    // case VehMotion::TURNING:
-    //     display.println("Turing");
-    //     break;
-    // case VehMotion::FORWARD:
-    //     display.println("Forward");
-    //     break;
-    // case VehMotion::BACKWARD:
-    //     display.println("Backward");
-    //     break;
-    // case VehMotion::ADJUST:
-    //     display.println("Adjust");
-    //     break;
-    // case VehMotion::SEARCH:
-    //     display.println("Search");
-    // default:
-    //     break;
-    // }
+    switch (g_state.motion)
+    {
+    case VehMotion::VOID:
+        display.println("Void");
+        break;
+    case VehMotion::TURNING:
+        display.println("Turing");
+        break;
+    case VehMotion::FORWARD:
+        display.println("Forward");
+        break;
+    case VehMotion::BACKWARD:
+        display.println("Backward");
+        break;
+    case VehMotion::ADJUST:
+        display.println("Adjust");
+        break;
+    case VehMotion::SEARCH:
+        display.println("Search");
+    default:
+        break;
+    }
 
-    // display.display();
+    display.display();
 }
 
 void setup()
