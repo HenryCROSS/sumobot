@@ -209,9 +209,9 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
     frontR /= MAX_QTR_SCAN_TIME;
     back /= MAX_QTR_SCAN_TIME;
 
-    debug::serial_println(String("FrontL: ") + String(frontL));
-    debug::serial_println(String("FrontR: ") + String(frontR));
-    debug::serial_println(String("Back  : ") + String(back));
+    Serial.println(String("FrontL: ") + String(frontL));
+    Serial.println(String("FrontR: ") + String(frontR));
+    Serial.println(String("Back  : ") + String(back));
 
     // TODO: change back
     if (frontL <= QTR_THRESHOLD && frontR <= QTR_THRESHOLD)

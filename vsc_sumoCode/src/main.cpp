@@ -429,5 +429,5 @@ void loop()
     // delay(480);
 
     // car_stop();
-    // delay(1000);
+    delay(1000);
 }
