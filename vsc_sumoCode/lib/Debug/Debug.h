@@ -6,8 +6,8 @@
 
 namespace debug
 {
-    template <bool B = DEBUG>
-    void serial_println(const String str)
+    template <bool B = DEBUG, typename T>
+    void serial_println(const T str)
     {
         if constexpr (B)
         {
@@ -15,8 +15,8 @@ namespace debug
         }
     }
 
-    template <bool B = DEBUG>
-    void serial_print(const String str)
+    template <bool B = DEBUG, typename T>
+    void serial_print(const T str)
     {
         if constexpr (B)
         {
