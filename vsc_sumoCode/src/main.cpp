@@ -30,87 +30,88 @@ void task_qtr()
 
 void task_normal_attack()
 {
-    // int search_distance = 40;
+    int search_distance = 40;
 
-    // if (g_state.edge_info.hasValue())
-    // {
-    //     g_state.motion = VehMotion::TURNING;
-    //     switch (g_state.edge_info.getValue())
-    //     {
-    //     case Edge_Signal::BACK:
-    //         // TODO: maybe go random?
-    //         car_go_forward(SPEED);
-    //         debug::serial_println("Detect edge BACK");
-    //         break;
-    //     case Edge_Signal::FRONT:
-    //         car_turn_left_by_speed(SPEED, SPEED);
-    //         debug::serial_println("Detect edge FRONT");
-    //         break;
-    //     case Edge_Signal::FRONT_LEFT:
-    //         car_turn_left_by_speed(SPEED, SPEED);
-    //         debug::serial_println("Detect edge FRONT Left");
-    //         break;
-    //     case Edge_Signal::FRONT_RIGHT:
-    //         car_turn_right_by_speed(SPEED, SPEED);
-    //         debug::serial_println("Detect edge FRONT right");
-    //         break;
-    //     default:
-    //         break;
-    //     }
+    if (g_state.edge_info.hasValue())
+    {
+        g_state.motion = VehMotion::TURNING;
+        switch (g_state.edge_info.getValue())
+        {
+        case Edge_Signal::BACK:
+            // TODO: maybe go random?
+            car_go_forward(SPEED);
+            debug::serial_println("Detect edge BACK");
+            break;
+        case Edge_Signal::FRONT:
+            car_turn_left_by_speed(SPEED, SPEED);
+            debug::serial_println("Detect edge FRONT");
+            break;
+        case Edge_Signal::FRONT_LEFT:
+            car_turn_left_by_speed(SPEED, SPEED);
+            debug::serial_println("Detect edge FRONT Left");
+            break;
+        case Edge_Signal::FRONT_RIGHT:
+            car_turn_right_by_speed(SPEED, SPEED);
+            debug::serial_println("Detect edge FRONT right");
+            break;
+        default:
+            break;
+        }
 
-    //     delay(TIMESLICE * 40);
-    //     g_state.speed = SPEED;
-    // }
-    // else if (is_obj_in_distance(g_state.ultra_info, search_distance))
-    // {
-    //     // calculation of the gap
-    //     // auto gap = abs(g_state.ultra_info.left_sensor.getValue() - g_state.ultra_info.left_sensor.getValue());
-    //     // auto gap = calculate_gap(g_state.ultra_info);
-    //     auto gap = 3;
+        delay(TIMESLICE * 40);
+        g_state.speed = SPEED;
+    }
+    //BUG
+    else if (is_obj_in_distance(g_state.ultra_info, search_distance))
+    {
+        // calculation of the gap
+        // auto gap = abs(g_state.ultra_info.left_sensor.getValue() - g_state.ultra_info.left_sensor.getValue());
+        // auto gap = calculate_gap(g_state.ultra_info);
+        auto gap = 3;
 
-    //     if (is_adjusting_needed(g_state.ultra_info, gap))
-    //     {
-    //         g_state.motion = VehMotion::ADJUST;
-    //         g_state.speed = car_adjust_attack_direction(g_state.ultra_info, SPEED);
-    //         delay(TIMESLICE * 3);
-    //         debug::serial_println("over +- 3, adjust");
-    //     }
-    //     else
-    //     {
-    //         // attack strategy
-    //         g_state.motion = VehMotion::FORWARD;
-    //         if (is_obj_in_distance(g_state.ultra_info, 10))
-    //         {
-    //             // attack_strategy(120, TIMESLICE * 10);
-    //             car_go_forward(255);
-    //             g_state.speed = 255;
-    //             debug::serial_println("within 10, attack");
-    //         }
-    //         else if (is_obj_in_distance(g_state.ultra_info, 20))
-    //         {
-    //             // attack_strategy(120, TIMESLICE * 10);
-    //             car_go_forward(155);
-    //             g_state.speed = 155;
-    //             debug::serial_println("within 20, attack");
-    //         }
-    //         else
-    //         {
-    //             car_go_forward(90);
-    //             g_state.speed = 90;
-    //             delay(TIMESLICE * 3);
-    //             debug::serial_println("within 40, attack");
-    //         }
-    //     }
-    // }
-    // else
-    // {
-    //     g_state.motion = VehMotion::SEARCH;
-    //     debug::serial_println("searching");
-    //     car_turn_left(SPEED);
-    //     // search_strategy(g_state.search_strategy, search_distance, SPEED, 500);
-    //     // car_go_forward(SPEED);
-    //     g_state.speed = SPEED;
-    // }
+        if (is_adjusting_needed(g_state.ultra_info, gap))
+        {
+            g_state.motion = VehMotion::ADJUST;
+            g_state.speed = car_adjust_attack_direction(g_state.ultra_info, SPEED);
+            delay(TIMESLICE * 3);
+            // debug::serial_println("over +- 3, adjust");
+        }
+        else
+        {
+            // attack strategy
+            g_state.motion = VehMotion::FORWARD;
+            if (is_obj_in_distance(g_state.ultra_info, 10))
+            {
+                // attack_strategy(120, TIMESLICE * 10);
+                car_go_forward(255);
+                g_state.speed = 255;
+                // debug::serial_println("within 10, attack");
+            }
+            else if (is_obj_in_distance(g_state.ultra_info, 20))
+            {
+                // attack_strategy(120, TIMESLICE * 10);
+                car_go_forward(155);
+                g_state.speed = 155;
+                // debug::serial_println("within 20, attack");
+            }
+            else
+            {
+                car_go_forward(90);
+                g_state.speed = 90;
+                delay(TIMESLICE * 3);
+                // debug::serial_println("within 40, attack");
+            }
+        }
+    }
+    else
+    {
+        g_state.motion = VehMotion::SEARCH; // OK
+        // debug::serial_println("searching"); // TODO: Removed
+        car_turn_left(SPEED); // OK
+        // search_strategy(g_state.search_strategy, search_distance, SPEED, 500); // TODO: Change
+        car_go_forward(SPEED); // OK
+        g_state.speed = SPEED; // OK
+    }
 }
 
 void task_oled_display()
