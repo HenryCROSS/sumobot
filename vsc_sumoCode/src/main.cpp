@@ -30,7 +30,7 @@ void task_qtr()
 
 void task_normal_attack()
 {
-    int search_distance = 40;
+    int search_distance = 35;
 
     if (g_state.edge_info.hasValue())
     {
@@ -72,7 +72,7 @@ void task_normal_attack()
         if (is_adjusting_needed(g_state.ultra_info, gap))
         {
             g_state.motion = VehMotion::ADJUST;
-            g_state.speed = car_adjust_attack_direction(g_state.ultra_info, SPEED);
+            g_state.speed = car_adjust_attack_direction(g_state.ultra_info, 30);
             delay(TIMESLICE * 3);
             // debug::serial_println("over +- 3, adjust");
         }
@@ -107,8 +107,8 @@ void task_normal_attack()
     {
         g_state.motion = VehMotion::SEARCH; // OK
         // debug::serial_println("searching"); // TODO: Change
-        // car_turn_left(SPEED); // OK
-        search_strategy(g_state.search_strategy, search_distance, 50, 500); // TODO: Change
+        car_turn_left_by_speed(42,42); // OK
+        // search_strategy(g_state.search_strategy, search_distance, 35, 500); // TODO: Change
         // car_go_forward(SPEED); // OK
         g_state.speed = SPEED; // OK
     }
