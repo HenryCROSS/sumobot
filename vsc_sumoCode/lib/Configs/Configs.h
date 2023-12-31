@@ -30,7 +30,7 @@
 
 #define ROTATE_ONE_DEGREE_IN_MS (180.0 / 480.0) //in speed 75, not accurate
 
-#define MAX_TASKS (20)
+#define MAX_TASKS (6)
 
 #define MAX_QTR_SCAN_TIME (10)
 
