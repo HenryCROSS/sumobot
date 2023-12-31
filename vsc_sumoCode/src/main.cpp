@@ -67,16 +67,16 @@ void task_normal_attack()
         // calculation of the gap
         // auto gap = abs(g_state.ultra_info.left_sensor.getValue() - g_state.ultra_info.left_sensor.getValue());
         // auto gap = calculate_gap(g_state.ultra_info);
-        auto gap = 3;
+        auto gap = 30;
 
-        // if (is_adjusting_needed(g_state.ultra_info, gap))
-        // {
-        //     g_state.motion = VehMotion::ADJUST;
-        //   g_state.speed = car_adjust_attack_direction(g_state.ultra_info, 40);
-        //     delay(TIMESLICE);
-        //     // debug::serial_println("over +- 3, adjust");
-        // }
-        // else
+        if (is_adjusting_needed(g_state.ultra_info, gap))
+        {
+            g_state.motion = VehMotion::ADJUST;
+          g_state.speed = car_adjust_attack_direction(g_state.ultra_info, 40);
+            delay(TIMESLICE);
+            // debug::serial_println("over +- 3, adjust");
+        }
+         else
         {
             // attack strategy
             g_state.motion = VehMotion::FORWARD;
