@@ -16,15 +16,15 @@
 #define TRIGGER_PIN_R 4          // Ultrasonic sensor trigger pin
 #define ECHO_PIN_R 5             // Ultrasonic sensor echo pin
 #define QTR_SENSOR_FL A2         // qtr sensor
-#define QTR_SENSOR_FR A0         // qtr sensor
-#define QTR_SENSOR_B A1          // qtr sensor
+#define QTR_SENSOR_FR A1       // qtr sensor
+#define QTR_SENSOR_B A0         // qtr sensor
 
 #define MAX_DISTANCE (200)        // Max detect distance
 #define TIMESLICE (10)            // time for each action lasts
 #define E (2.71828)               // value of e
 
-#define QTR_THRESHOLD (650)
-// #define QTR_THRESHOLD (250)
+//#define QTR_THRESHOLD (650)
+ #define QTR_THRESHOLD (950)
 
 #define SPEED (75)
 
