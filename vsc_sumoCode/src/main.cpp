@@ -61,7 +61,7 @@ void task_normal_attack()
         delay(TIMESLICE * 40);
         g_state.speed = SPEED;
     }
-    //BUG
+    // BUG
     else if (is_obj_in_distance(g_state.ultra_info, search_distance))
     {
         // calculation of the gap
@@ -116,6 +116,9 @@ void task_normal_attack()
 
 void task_oled_display()
 {
+    if (!g_state.monitor_running)
+        return;
+
     display.clearDisplay();
     display.setTextSize(1);
     display.setTextColor(WHITE);
@@ -211,51 +214,50 @@ void setup()
     pinMode(LEFT_MOTOR, OUTPUT);
     pinMode(RIGHT_MOTOR, OUTPUT);
 
-    // if (display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
-    // { // Address 0x3D for 128x64
-    //     delay(2000);
-
-    //     g_state.monitor_running = true;
-
-    //     display.clearDisplay();
-    //     display.setTextSize(2);
-    //     display.setTextColor(WHITE);
-    //     display.setCursor(0, 10);
-    //     // Display static text
-    //     display.println("CHARGE!!");
-    //     display.display();
-    // }
-    // else
-    // {
-    //     Serial.println(F("SSD1306 allocation failed"));
-    //     delay(2000);
-    // }
-
-    // delay(4000);
-
-    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+    if (display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
     { // Address 0x3D for 128x64
-        Serial.println(F("SSD1306 allocation failed"));
-        for (;;)
-            ;
+        delay(2000);
+
+        g_state.monitor_running = true;
+
+        display.clearDisplay();
+        display.setTextSize(2);
+        display.setTextColor(WHITE);
+        display.setCursor(0, 10);
+        // Display static text
+        display.println("CHARGE!!");
+        display.display();
     }
-    delay(2000);
+    else
+    {
+        Serial.println(F("SSD1306 allocation failed"));
+        delay(2000);
+    }
 
-    display.clearDisplay();
+    delay(4000);
 
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(0, 10);
-    // Display static text
-    display.println("CHARGE!");
-    display.display();
+    // if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+    // { // Address 0x3D for 128x64
+    //     Serial.println(F("SSD1306 allocation failed"));
+    //     for (;;)
+    //         ;
+    // }
+    // delay(2000);
 
+    // display.clearDisplay();
 
-    MK2System::init();
-    MK2System::register_task(task_searching, Task_Type::PREEMPTIVE, -1);
-    MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
-    MK2System::register_task(task_normal_attack, Task_Type::PREEMPTIVE, -1);
-    MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
+    // display.setTextSize(1);
+    // display.setTextColor(WHITE);
+    // display.setCursor(0, 10);
+    // // Display static text
+    // display.println("CHARGE!");
+    // display.display();
+
+    // MK2System::init();
+    // MK2System::register_task(task_searching, Task_Type::PREEMPTIVE, -1);
+    // MK2System::register_task(task_qtr, Task_Type::PREEMPTIVE, -1);
+    // MK2System::register_task(task_normal_attack, Task_Type::PREEMPTIVE, -1);
+    // MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
 }
 
 struct Test
@@ -407,7 +409,11 @@ struct Test
 
     static void normal_mode()
     {
-        MK2System::run();
+        // MK2System::run();
+        task_searching();
+        task_qtr();
+        task_normal_attack();
+        task_oled_display();
     }
 };
 
