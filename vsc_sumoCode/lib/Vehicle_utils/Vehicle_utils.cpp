@@ -139,16 +139,18 @@ int car_adjust_attack_direction(Obj_direction info, int speed)
         auto result = car_adjustment_measurement(info.left_sensor.getValue(), info.right_sensor.getValue());
         // double factor = (abs(result.snd) - tolerance) / result.snd;
 
-        double factor = curve_algorithm(result.snd);
+        //double factor = curve_algorithm(1);
+        double factor =1;
         actual_speed = speed * factor;
+        
 
         switch (result.fst)
         {
         case OP_Vehicle::GO_LEFT:
-            car_turn_left(actual_speed);
+            car_turn_left_by_speed(actual_speed,actual_speed);
             break;
         case OP_Vehicle::GO_RIGHT:
-            car_turn_right(actual_speed);
+            car_turn_right_by_speed(actual_speed,actual_speed);
             break;
         default:
             break;
@@ -157,15 +159,17 @@ int car_adjust_attack_direction(Obj_direction info, int speed)
     }
     else if (info.left_sensor.hasValue())
     {
-        double factor = curve_algorithm(1);
+        //double factor = curve_algorithm(1);
+        double factor = 1;
         actual_speed = speed * factor;
-        car_turn_left(actual_speed);
+        car_turn_left_by_speed(actual_speed,actual_speed);
     }
     else if (info.right_sensor.hasValue())
     {
-        double factor = curve_algorithm(1);
+        //double factor = curve_algorithm(1);
+        double factor = 1;
         actual_speed = speed * factor;
-        car_turn_right(actual_speed);
+        car_turn_right_by_speed(actual_speed,actual_speed);
     }
 
     return actual_speed;
