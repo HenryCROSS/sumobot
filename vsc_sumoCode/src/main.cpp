@@ -63,8 +63,6 @@ void task_normal_attack()
     }
     else if (is_obj_in_distance(g_state.ultra_info, search_distance))
     {
-        g_state.motion = VehMotion::FORWARD;
-
         // calculation of the gap
         // auto gap = abs(g_state.ultra_info.left_sensor.getValue() - g_state.ultra_info.left_sensor.getValue());
         // auto gap = calculate_gap(g_state.ultra_info);
@@ -80,6 +78,7 @@ void task_normal_attack()
         else
         {
             // attack strategy
+            g_state.motion = VehMotion::FORWARD;
             if (is_obj_in_distance(g_state.ultra_info, 10))
             {
                 // attack_strategy(120, TIMESLICE * 10);
@@ -247,7 +246,7 @@ void setup()
     delay(2000);
 
     MK2System::register_task(task_oled_display, Task_Type::PREEMPTIVE, -1);
-    
+
     display.clearDisplay();
 
     display.setTextSize(1);
