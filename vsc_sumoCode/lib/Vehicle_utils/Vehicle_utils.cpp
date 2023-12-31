@@ -205,9 +205,9 @@ Maybe<Edge_Signal> determine_edge(uint8_t qtr_sensor_front_left, uint8_t qtr_sen
     frontR /= MAX_QTR_SCAN_TIME;
     back /= MAX_QTR_SCAN_TIME;
 
-    debug::serial_println(String("QTR avg: FL,") + frontL);
-    debug::serial_println(String("QTR avg: FR,") + frontR);
-    debug::serial_println(String("QTR avg: BK,") + back);
+    debug::serial_println(String("QTR avg: FL,") + String(frontL));
+    debug::serial_println(String("QTR avg: FR,") + String(frontR));
+    debug::serial_println(String("QTR avg: BK,") + String(back));
 
     // TODO: change back
     if (frontL <= QTR_THRESHOLD && frontR <= QTR_THRESHOLD)
@@ -243,8 +243,8 @@ Obj_direction obj_detection_info()
 {
     auto distance_l = detect_obj_distance(TRIGGER_PIN_L, ECHO_PIN_L);
     auto distance_r = detect_obj_distance(TRIGGER_PIN_R, ECHO_PIN_R);
-    debug::serial_println(String("Ultra: L,") + distance_l.getValue());
-    debug::serial_println(String("Ultra: R,") + distance_r.getValue());
+    debug::serial_println(String("Ultra: L,") + String(distance_l.getValue()));
+    debug::serial_println(String("Ultra: R,") + String(distance_r.getValue()));
 
     return (Obj_direction){
         .left_sensor = distance_l,
