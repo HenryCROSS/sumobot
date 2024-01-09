@@ -1,13 +1,8 @@
 #ifndef _VEHICLE_ACTIONS_HPP_
 #define _VEHICLE_ACTIONS_HPP_
 
-enum class Strategy
-{
-    ROTATION,
-};
+#include <Vehicle_types.hpp>
 
-bool search_strategy(Strategy strategy, int distance, int speed, unsigned long ms);
-
-void attack_strategy(int speed, unsigned long ms);
+// bool search_strategy(Edge_Signal signal);
 
 #endif // !_VEHICLE_ACTIONS_HPP_

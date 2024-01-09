@@ -47,7 +47,6 @@ struct VehState
 {
     bool monitor_running;
     Stage stage;
-    Strategy search_strategy;
     VehMotion motion;
     int speed;
     int range;
@@ -61,7 +60,6 @@ struct VehState
         speed = 0;
         stage = Stage::INIT;
         edge_info = Maybe<Edge_Signal>::Nothing();
-        search_strategy = Strategy::ROTATION;
         motion = VehMotion::VOID;
         ultra_info = {
             Maybe<double>::Nothing(),

@@ -23,7 +23,7 @@
 #define TIMESLICE (10)     // time for each action lasts
 #define E (2.71828)        // value of e
 
-#define QTR_THRESHOLD (250)
+#define QTR_THRESHOLD (550)
 //  #define QTR_THRESHOLD (900)
 
 #define SPEED (75)

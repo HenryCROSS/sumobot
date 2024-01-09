@@ -18,6 +18,24 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 VehState g_state{};
 
+bool search_strategy(Edge_Signal signal){
+    switch (signal)
+    {
+    case Edge_Signal::FRONT:
+    case Edge_Signal::FRONT_LEFT:
+    case Edge_Signal::BACK:
+        car_turn_left_by_speed(52, 52);
+        break;
+
+    case Edge_Signal::FRONT_RIGHT:
+        car_turn_right_by_speed(52, 52);
+        break;
+    
+    default:
+        break;
+    }
+}
+
 void task_searching()
 {
     g_state.ultra_info = obj_detection_info();
@@ -30,7 +48,7 @@ void task_qtr()
 
 void task_normal_attack()
 {
-    int search_distance = 40;
+    int search_distance = 60;
 
     if (g_state.edge_info.hasValue())
     {
@@ -40,18 +58,27 @@ void task_normal_attack()
         case Edge_Signal::BACK:
             // TODO: maybe go random?
             car_go_forward(SPEED);
+            // delay(TIMESLICE * 40);
             debug::serial_println("Detect edge BACK");
             break;
         case Edge_Signal::FRONT:
             car_turn_left_by_speed(SPEED, 0);
+            // car_go_forward(SPEED);
+            // delay(TIMESLICE * 40);
             debug::serial_println("Detect edge FRONT");
             break;
         case Edge_Signal::FRONT_LEFT:
-            car_turn_left_by_speed(SPEED, 0);
+            car_turn_right_by_speed(0, SPEED);
+            delay(TIMESLICE * 40);
+            // car_go_forward(SPEED);
+            // delay(TIMESLICE * 40);
             debug::serial_println("Detect edge FRONT Left");
             break;
         case Edge_Signal::FRONT_RIGHT:
-            car_turn_right_by_speed(0, SPEED);
+            car_turn_left_by_speed(SPEED, 0);
+            delay(TIMESLICE * 40);
+            // car_go_forward(SPEED);
+            // delay(TIMESLICE * 40);
             debug::serial_println("Detect edge FRONT right");
             break;
         default:
@@ -80,14 +107,14 @@ void task_normal_attack()
         {
             // attack strategy
             g_state.motion = VehMotion::FORWARD;
-            if (is_obj_in_distance(g_state.ultra_info, 10))
+            if (is_obj_in_distance(g_state.ultra_info, 5))
             {
                 // attack_strategy(120, TIMESLICE * 10);
-                car_go_forward(255);
+                car_go_forward(250);
                 g_state.speed = 255;
                 // debug::serial_println("within 10, attack");
             }
-            else if (is_obj_in_distance(g_state.ultra_info, 20))
+            else if (is_obj_in_distance(g_state.ultra_info, 10))
             {
                 // attack_strategy(120, TIMESLICE * 10);
                 car_go_forward(155);
@@ -106,10 +133,14 @@ void task_normal_attack()
     else
     {
         g_state.motion = VehMotion::SEARCH; // OK
+        static Edge_Signal edge = Edge_Signal::FRONT_LEFT;
         // debug::serial_println("searching"); // TODO: Change
         car_turn_left_by_speed(42, 42); // OK
-        // search_strategy(g_state.search_strategy, search_distance, 35, 500); // TODO: Change
-        // car_go_forward(SPEED); // OK
+
+        if(g_state.edge_info.hasValue()){
+            edge = g_state.edge_info.getValue();
+        }
+        search_strategy(edge);
         g_state.speed = SPEED; // OK
     }
 }

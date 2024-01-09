@@ -6,7 +6,7 @@
 
 // static bool rotation(int distance, int speed, unsigned long ms);
 
-bool search_strategy(Edge_Signal& signal){
+bool search_strategy(Edge_Signal signal){
     switch (signal)
     {
     case Edge_Signal::FRONT:
