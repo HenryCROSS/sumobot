@@ -30,8 +30,8 @@ void wheel_move_speed(uint8_t pin, int speed)
 
 void car_go_forward(int speed)
 {
-    wheel_move_speed(LEFT_MOTOR, speed);
-    wheel_move_speed(RIGHT_MOTOR, speed);
+    wheel_move_speed(LEFT_MOTOR, speed-DELTA);
+    wheel_move_speed(RIGHT_MOTOR, speed+DELTA);
     wheel_forward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
     wheel_forward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
@@ -46,8 +46,8 @@ void car_go_forward_by_speed(int left_wheel_speed, int right_wheel_speed)
 
 void car_go_backward(int speed)
 {
-    wheel_move_speed(LEFT_MOTOR, speed);
-    wheel_move_speed(RIGHT_MOTOR, speed);
+    wheel_move_speed(LEFT_MOTOR, speed-DELTA);
+    wheel_move_speed(RIGHT_MOTOR, speed+DELTA);
     wheel_backward(LEFT_WHEEL_FORWARD, LEFT_WHEEL_BACKWARD);
     wheel_backward(RIGHT_WHEEL_FORWARD, RIGHT_WHEEL_BACKWARD);
 }
