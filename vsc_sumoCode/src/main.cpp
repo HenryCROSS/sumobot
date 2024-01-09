@@ -43,15 +43,15 @@ void task_normal_attack()
             debug::serial_println("Detect edge BACK");
             break;
         case Edge_Signal::FRONT:
-            car_turn_left_by_speed(SPEED, SPEED);
+            car_turn_left_by_speed(SPEED, 0);
             debug::serial_println("Detect edge FRONT");
             break;
         case Edge_Signal::FRONT_LEFT:
-            car_turn_left_by_speed(SPEED, SPEED);
+            car_turn_left_by_speed(SPEED, 0);
             debug::serial_println("Detect edge FRONT Left");
             break;
         case Edge_Signal::FRONT_RIGHT:
-            car_turn_right_by_speed(SPEED, SPEED);
+            car_turn_right_by_speed(0, SPEED);
             debug::serial_println("Detect edge FRONT right");
             break;
         default:

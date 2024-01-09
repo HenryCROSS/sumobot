@@ -6,52 +6,22 @@
 
 // static bool rotation(int distance, int speed, unsigned long ms);
 
-bool search_strategy(Strategy strategy, int distance, int speed, unsigned long ms)
-{
-    static uint16_t last = 0;
-    static Maybe<Edge_Signal> signal = Maybe<Edge_Signal>::Nothing();
-
-    bool found = false;
-
-    while (last < ms && !found)
+bool search_strategy(Edge_Signal& signal){
+    switch (signal)
     {
-        if (signal.hasValue())
-        {
-            switch (signal.getValue())
-            {
-            case Edge_Signal::FRONT:
-                car_turn_left_by_speed(speed, speed);
-                break;
-            case Edge_Signal::FRONT_LEFT:
-                car_turn_right_by_speed(speed, speed);
-                break;
-            case Edge_Signal::FRONT_RIGHT:
-                car_turn_left_by_speed(speed, speed);
-                break;
-            case Edge_Signal::BACK:
-                car_go_forward(speed);
-                break;
-            default:
-                break;
-            }
-        }
-        else
-        {
-            car_turn_left_by_speed(speed, speed);
-        }
+    case Edge_Signal::FRONT:
+    case Edge_Signal::FRONT_LEFT:
+    case Edge_Signal::BACK:
+        car_turn_left_by_speed(SPEED, SPEED);
+        break;
 
-        last += TIMESLICE;
-        delay(TIMESLICE);
-
-        signal = determine_edge(QTR_SENSOR_FL, QTR_SENSOR_FR, QTR_SENSOR_B);
-
-        auto info = obj_detection_info();
-        found = is_obj_in_distance(info, distance);
+    case Edge_Signal::FRONT_RIGHT:
+        car_turn_right_by_speed(SPEED, SPEED);
+        break;
+    
+    default:
+        break;
     }
-
-    last = 0;
-
-    return found;
 }
 
 // static bool rotation(int distance, int speed, unsigned long ms)
