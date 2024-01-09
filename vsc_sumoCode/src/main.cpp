@@ -421,7 +421,10 @@ void loop()
 {
     debug::serial_println("===============");
     Test::normal_mode();
-
+    
+    
+    //car_go_forward(SPEED);
+    
     // Test::monitor_test_mode();
     // attack_strategy(100, 100);
 
