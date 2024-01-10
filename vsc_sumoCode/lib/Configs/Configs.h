@@ -23,10 +23,10 @@
 #define TIMESLICE (10)     // time for each action lasts
 #define E (2.71828)        // value of e
 
-#define QTR_THRESHOLD (550)
-//  #define QTR_THRESHOLD (900)
+// #define QTR_THRESHOLD (550)
+ #define QTR_THRESHOLD (900)
 
-#define SPEED (75)
+#define SPEED (55)
 #define DELTA (-5) //speed difference between two wheel, test in the field
 
 #define ROTATE_ONE_DEGREE_IN_MS (180.0 / 480.0) // in speed 75, not accurate
