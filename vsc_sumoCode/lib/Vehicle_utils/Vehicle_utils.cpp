@@ -19,8 +19,8 @@ void wheel_backward(uint8_t forward_pin, uint8_t backward_pin)
 
 void wheel_stop(uint8_t forward_pin, uint8_t backward_pin)
 {
-    digitalWrite(forward_pin, LOW);
-    digitalWrite(backward_pin, LOW);
+    digitalWrite(forward_pin, HIGH);
+    digitalWrite(backward_pin, HIGH);
 }
 
 void wheel_move_speed(uint8_t pin, int speed)
