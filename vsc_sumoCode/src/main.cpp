@@ -49,7 +49,7 @@ void task_qtr()
 
 void task_normal_attack()
 {
-    int search_distance = 50;
+    int search_distance = 60;
 
     if (g_state.edge_info.hasValue())
     {
@@ -67,33 +67,33 @@ void task_normal_attack()
             car_go_backward(SPEED + 40);
             delay(TIMESLICE * 40);
             car_turn_left_by_speed(SPEED, 0);
-            // car_go_forward(SPEED);
-            delay(TIMESLICE * 40);
+            delay(TIMESLICE * 20);
+            car_go_forward(SPEED);
+            delay(TIMESLICE * 20);
             debug::serial_println("Detect edge FRONT");
             break;
         case Edge_Signal::FRONT_LEFT:
             car_go_backward(SPEED + 40);
             delay(TIMESLICE * 40);
             car_turn_right_by_speed(0, SPEED);
-            delay(TIMESLICE * 40);
-            // car_go_forward(SPEED);
-            // delay(TIMESLICE * 40);
+            delay(TIMESLICE * 20);
+            car_go_forward(SPEED);
+            delay(TIMESLICE * 20);
             debug::serial_println("Detect edge FRONT Left");
             break;
         case Edge_Signal::FRONT_RIGHT:
             car_go_backward(SPEED + 40);
             delay(TIMESLICE * 40);
             car_turn_left_by_speed(SPEED, 0);
-            delay(TIMESLICE * 40);
-            // car_go_forward(SPEED);
-            // delay(TIMESLICE * 40);
+            delay(TIMESLICE * 20);
+            car_go_forward(SPEED);
+            delay(TIMESLICE * 20);
             debug::serial_println("Detect edge FRONT right");
             break;
         default:
             break;
         }
 
-        // car_go_forward(SPEED);
         // delay(TIMESLICE * 40);
         g_state.speed = SPEED;
     }
@@ -119,14 +119,14 @@ void task_normal_attack()
             if (is_obj_in_distance(g_state.ultra_info, 5))
             {
                 // attack_strategy(120, TIMESLICE * 10);
-                car_go_forward(45);
+                car_go_forward(255);
                 g_state.speed = 255;
                 // debug::serial_println("within 10, attack");
             }
-            else if (is_obj_in_distance(g_state.ultra_info, 10))
+            else if (is_obj_in_distance(g_state.ultra_info, 7))
             {
                 // attack_strategy(120, TIMESLICE * 10);
-                car_go_forward(45);
+                car_go_forward(155);
                 g_state.speed = 155;
                 // debug::serial_println("within 20, attack");
             }
