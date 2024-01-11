@@ -59,17 +59,17 @@ void task_normal_attack()
         case Edge_Signal::BACK:
             // TODO: maybe go random?
             // car_turn_left_by_speed(SPEED, 0);
-            car_go_backward(SPEED);
+            car_go_backward(STRONG_POWER_SPEED);
+            delay(TIMESLICE * 30);
+            car_turn_left_by_speed(SPEED, SPEED);
             delay(TIMESLICE * 40);
-            car_turn_left_by_speed(SPEED, 0);
-            delay(TIMESLICE * 20);
             debug::serial_println("Detect edge BACK");
             break;
         case Edge_Signal::FRONT:
             car_go_backward(SPEED + 40);
             delay(TIMESLICE * 40);
             car_turn_left_by_speed(SPEED, 0);
-            delay(TIMESLICE * 20);
+            delay(TIMESLICE * 40);
             car_go_forward(SPEED);
             delay(TIMESLICE * 20);
             debug::serial_println("Detect edge FRONT");
@@ -78,7 +78,7 @@ void task_normal_attack()
             car_go_backward(SPEED + 40);
             delay(TIMESLICE * 40);
             car_turn_right_by_speed(0, SPEED);
-            delay(TIMESLICE * 20);
+            delay(TIMESLICE * 40);
             car_go_forward(SPEED);
             delay(TIMESLICE * 20);
             debug::serial_println("Detect edge FRONT Left");
@@ -87,7 +87,7 @@ void task_normal_attack()
             car_go_backward(SPEED + 40);
             delay(TIMESLICE * 40);
             car_turn_left_by_speed(SPEED, 0);
-            delay(TIMESLICE * 20);
+            delay(TIMESLICE * 40);
             car_go_forward(SPEED);
             delay(TIMESLICE * 20);
             debug::serial_println("Detect edge FRONT right");
@@ -118,14 +118,14 @@ void task_normal_attack()
         {
             // attack strategy
             g_state.motion = VehMotion::FORWARD;
-            if (is_obj_in_distance(g_state.ultra_info, 5))
+            if (is_obj_in_distance(g_state.ultra_info, 7))
             {
                 // attack_strategy(120, TIMESLICE * 10);
-                car_go_forward(255);
+                car_go_forward(210);
                 g_state.speed = 255;
                 // debug::serial_println("within 10, attack");
             }
-            else if (is_obj_in_distance(g_state.ultra_info, 7))
+            else if (is_obj_in_distance(g_state.ultra_info, 10))
             {
                 // attack_strategy(120, TIMESLICE * 10);
                 car_go_forward(155);
@@ -464,6 +464,7 @@ void loop()
 {
     debug::serial_println("===============");
     Test::normal_mode();
+    // car_go_forward(SPEED);
 
     // Test::monitor_test_mode();
     // attack_strategy(100, 100);
