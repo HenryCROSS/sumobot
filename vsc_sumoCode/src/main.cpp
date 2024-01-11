@@ -59,8 +59,10 @@ void task_normal_attack()
         case Edge_Signal::BACK:
             // TODO: maybe go random?
             // car_turn_left_by_speed(SPEED, 0);
-            car_go_forward(SPEED);
+            car_go_backward(SPEED);
             delay(TIMESLICE * 40);
+            car_turn_left_by_speed(SPEED, 0);
+            delay(TIMESLICE * 20);
             debug::serial_println("Detect edge BACK");
             break;
         case Edge_Signal::FRONT:
@@ -132,8 +134,8 @@ void task_normal_attack()
             }
             else
             {
-                car_go_forward(45);
-                g_state.speed = 90;
+                car_go_forward(SPEED);
+                g_state.speed = SPEED;
                 delay(TIMESLICE * 3);
                 // debug::serial_println("within 40, attack");
             }
@@ -144,7 +146,7 @@ void task_normal_attack()
         g_state.motion = VehMotion::SEARCH; // OK
         static Edge_Signal edge = Edge_Signal::FRONT_LEFT;
         // debug::serial_println("searching"); // TODO: Change
-        car_turn_left_by_speed(42, 42); // OK
+        // car_turn_left_by_speed(42, 42); // OK
 
         if (g_state.edge_info.hasValue())
         {

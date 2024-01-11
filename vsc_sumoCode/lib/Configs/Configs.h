@@ -26,7 +26,10 @@
 // #define QTR_THRESHOLD (550)
  #define QTR_THRESHOLD (900)
 
-#define SPEED (55)
+#define WEAK_POWER_SPEED (45)
+#define STRONG_POWER_SPEED (75)
+#define SPEED (WEAK_POWER_SPEED)
+
 #define DELTA (-5) //speed difference between two wheel, test in the field
 
 #define ROTATE_ONE_DEGREE_IN_MS (180.0 / 480.0) // in speed 75, not accurate
