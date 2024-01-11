@@ -68,7 +68,7 @@ void task_normal_attack()
         case Edge_Signal::FRONT:
             car_go_backward(SPEED + 40);
             delay(TIMESLICE * 40);
-            car_turn_left_by_speed(SPEED, 0);
+            car_turn_left_by_speed(SPEED, SPEED);
             delay(TIMESLICE * 40);
             car_go_forward(SPEED);
             delay(TIMESLICE * 20);
@@ -77,7 +77,7 @@ void task_normal_attack()
         case Edge_Signal::FRONT_LEFT:
             car_go_backward(SPEED + 40);
             delay(TIMESLICE * 40);
-            car_turn_right_by_speed(0, SPEED);
+            car_turn_right_by_speed(SPEED, SPEED);
             delay(TIMESLICE * 40);
             car_go_forward(SPEED);
             delay(TIMESLICE * 20);
@@ -86,7 +86,7 @@ void task_normal_attack()
         case Edge_Signal::FRONT_RIGHT:
             car_go_backward(SPEED + 40);
             delay(TIMESLICE * 40);
-            car_turn_left_by_speed(SPEED, 0);
+            car_turn_left_by_speed(SPEED, SPEED);
             delay(TIMESLICE * 40);
             car_go_forward(SPEED);
             delay(TIMESLICE * 20);
