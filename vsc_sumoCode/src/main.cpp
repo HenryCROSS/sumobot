@@ -57,13 +57,14 @@ void task_normal_attack()
         switch (g_state.edge_info.getValue())
         {
         case Edge_Signal::BACK:
-            // TODO: maybe go random?
-            // car_turn_left_by_speed(SPEED, 0);
-            car_go_backward(STRONG_POWER_SPEED);
-            delay(TIMESLICE * 30);
-            car_turn_left_by_speed(SPEED, SPEED);
-            delay(TIMESLICE * 40);
-            debug::serial_println("Detect edge BACK");
+            if (!is_obj_in_distance(g_state.ultra_info, 10))
+            {
+                car_go_backward(STRONG_POWER_SPEED);
+                delay(TIMESLICE * 30);
+                car_turn_left_by_speed(SPEED, SPEED);
+                delay(TIMESLICE * 40);
+                debug::serial_println("Detect edge BACK");
+            }
             break;
         case Edge_Signal::FRONT:
             car_go_backward(SPEED + 40);
