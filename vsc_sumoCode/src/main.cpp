@@ -51,20 +51,17 @@ void task_normal_attack()
 {
     int search_distance = 60;
 
-    if (g_state.edge_info.hasValue())
+    if (g_state.edge_info.hasValue() && !g_state.is_hit)
     {
         g_state.motion = VehMotion::TURNING;
         switch (g_state.edge_info.getValue())
         {
         case Edge_Signal::BACK:
-            if (!is_obj_in_distance(g_state.ultra_info, 10))
-            {
-                car_go_backward(STRONG_POWER_SPEED);
-                delay(TIMESLICE * 30);
-                car_turn_left_by_speed(SPEED, SPEED);
-                delay(TIMESLICE * 40);
-                debug::serial_println("Detect edge BACK");
-            }
+            car_go_backward(STRONG_POWER_SPEED);
+            delay(TIMESLICE * 30);
+            car_turn_left_by_speed(SPEED, SPEED);
+            delay(TIMESLICE * 40);
+            debug::serial_println("Detect edge BACK");
             break;
         case Edge_Signal::FRONT:
             car_go_backward(SPEED + 40);
@@ -124,6 +121,7 @@ void task_normal_attack()
                 // attack_strategy(120, TIMESLICE * 10);
                 car_go_forward(210);
                 g_state.speed = 255;
+                g_state.is_hit = true;
                 // debug::serial_println("within 10, attack");
             }
             else if (is_obj_in_distance(g_state.ultra_info, 10))
@@ -131,6 +129,7 @@ void task_normal_attack()
                 // attack_strategy(120, TIMESLICE * 10);
                 car_go_forward(155);
                 g_state.speed = 155;
+                g_state.is_hit = true;
                 // debug::serial_println("within 20, attack");
             }
             else
@@ -138,6 +137,7 @@ void task_normal_attack()
                 car_go_forward(SPEED);
                 g_state.speed = SPEED;
                 delay(TIMESLICE * 3);
+                g_state.is_hit = false;
                 // debug::serial_println("within 40, attack");
             }
         }
@@ -146,6 +146,7 @@ void task_normal_attack()
     {
         g_state.motion = VehMotion::SEARCH; // OK
         static Edge_Signal edge = Edge_Signal::FRONT_LEFT;
+        g_state.is_hit = false;
         // debug::serial_println("searching"); // TODO: Change
         // car_turn_left_by_speed(42, 42); // OK
 

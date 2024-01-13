@@ -50,6 +50,7 @@ struct VehState
     VehMotion motion;
     int speed;
     int range;
+    bool is_hit;
     Obj_direction ultra_info;
     Maybe<Edge_Signal> edge_info;
 
@@ -58,6 +59,7 @@ struct VehState
         monitor_running = false;
         range = 0;
         speed = 0;
+        is_hit = false;
         stage = Stage::INIT;
         edge_info = Maybe<Edge_Signal>::Nothing();
         motion = VehMotion::VOID;
