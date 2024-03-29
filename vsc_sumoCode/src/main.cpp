@@ -100,35 +100,22 @@ void task_normal_attack()
     // BUG
     else if (is_obj_in_distance(g_state.ultra_info, search_distance))
     {
-        // calculation of the gap
-        // auto gap = abs(g_state.ultra_info.left_sensor.getValue() - g_state.ultra_info.left_sensor.getValue());
-        // auto gap = calculate_gap(g_state.ultra_info);
-        // auto gap = 30;
-
-        // if (is_adjusting_needed(g_state.ultra_info, gap))
-        // {
-        //     g_state.motion = VehMotion::ADJUST;
-        //   g_state.speed = car_adjust_attack_direction(g_state.ultra_info, 40);
-        //     delay(TIMESLICE);
-        //     // debug::serial_println("over +- 3, adjust");
-        // }
-        //  else
         {
             // attack strategy
             g_state.motion = VehMotion::FORWARD;
             if (is_obj_in_distance(g_state.ultra_info, 7))
             {
                 // attack_strategy(120, TIMESLICE * 10);
-                car_go_forward(210);
-                g_state.speed = 255;
+                car_go_forward(170);
+                g_state.speed = 170;
                 g_state.is_hit = true;
                 // debug::serial_println("within 10, attack");
             }
             else if (is_obj_in_distance(g_state.ultra_info, 10))
             {
                 // attack_strategy(120, TIMESLICE * 10);
-                car_go_forward(155);
-                g_state.speed = 155;
+                car_go_forward(100);
+                g_state.speed = 100;
                 g_state.is_hit = true;
                 // debug::serial_println("within 20, attack");
             }
